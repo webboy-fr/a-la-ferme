@@ -16,7 +16,7 @@ This project allows to highlight local products, farmers, their jobs, their pass
 
 ## Tech Stack
 
-**Client :** React, React DOM, Semantic UI, Mapbox
+**Client :** React, React DOM, Semantic UI React, Mapbox
 
 **Server :** Laravel 8, PHP 8.0.3+, MySQL
 
