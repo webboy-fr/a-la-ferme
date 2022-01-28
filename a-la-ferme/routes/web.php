@@ -19,3 +19,15 @@ Auth::routes();
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::any('/the-project', function(){
+    return view('hello');
+});
+
+//Auth::routes();
+
+Route::get('/admin', function () {
+    return 'Hello';
+})->middleware('admin');
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
