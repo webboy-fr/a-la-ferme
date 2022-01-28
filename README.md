@@ -26,7 +26,7 @@ This project allows to highlight local products, farmers, their jobs, their pass
 Clone the project
 
 ```bash
-  git clone https://github.com/Github-Name/projet-a-la-ferme.git
+  git clone https://github.com/Github-Name/a-la-ferme.git
 ```
 
 Go to the project directory
@@ -40,6 +40,12 @@ Install dependencies
 ```bash
   composer install
   npm install
+```
+
+Install migrations
+
+```bash
+  php artisan migrate
 ```
 
 Start the server
