@@ -26,11 +26,7 @@ This project allows to highlight local products, farmers, their jobs, their pass
 Clone the project
 
 ```bash
-<<<<<<< HEAD
   git clone https://github.com/Github-Name/a-la-ferme.git
-=======
-  git clone https://github.com/Github-Name/projet-ma-ferme-locale.git
->>>>>>> 0c0a15744d8dd7263aac53c85754bbad8999b569
 ```
 
 Go to the project directory (API)
