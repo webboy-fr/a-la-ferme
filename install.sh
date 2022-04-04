@@ -35,6 +35,8 @@ source or . php artisan migrate
 
 source or . php artisan db:seed
 
+source or . php artisan key:generate
+
 source or . php artisan serve
 
 pause
