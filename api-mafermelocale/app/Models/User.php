@@ -25,7 +25,8 @@ class User extends Authenticatable
         'username',
         'email',
         'password',
-        'role_id'
+        'role_id',
+        'address_id'
     ];
 
     /**
@@ -55,5 +56,13 @@ class User extends Authenticatable
     public function address()
     {
         return $this->hasOne(Address::class);
+    }
+
+    public function votes() {
+        return $this->hasMany(Vote::class);
+    }
+
+    public function farm() {
+        return $this->hasOne(Vote::class);
     }
 }

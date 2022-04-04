@@ -21,8 +21,7 @@ class Address extends Model
         'city',
         'lon',
         'lat',
-        'country_id',
-        'user_id'
+        'country_id'
     ];
 
     public function user()
@@ -34,4 +33,11 @@ class Address extends Model
     {
         return $this->belongsTo(Country::class);
     }
+
+    public function farm()
+    {
+        return $this->belongsTo(Farm::class);
+    }
+
+    
 }

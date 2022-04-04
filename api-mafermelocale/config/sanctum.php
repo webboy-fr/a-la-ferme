@@ -46,7 +46,8 @@ return [
     |
     */
 
-    'expiration' => null,
+    // set expiration minutes to 30 days in minutes
+    'expiration' => 30 * 24 * 60,
 
     /*
     |--------------------------------------------------------------------------

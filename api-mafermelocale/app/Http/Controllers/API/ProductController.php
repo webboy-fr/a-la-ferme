@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class ProductController extends BaseController
 {
@@ -14,17 +17,17 @@ class ProductController extends BaseController
      */
     public function index()
     {
-        //
-    }
+        $products = QueryBuilder::for(Product::with('category'))
+            ->allowedFilters('name', 'category.name')
+            ->allowedSorts('name', 'category.name')
+            ->paginate(20)
+            ->appends(request()->query());
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        if($products->isempty()) {
+            return $this->sendError('There is no products based on your filters');
+        }
+
+        return $this->sendResponse(Product::collection($products), 'All products retrieved.');
     }
 
     /**
@@ -35,7 +38,29 @@ class ProductController extends BaseController
      */
     public function store(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'product_name' => 'required',
+            'price' => 'required',
+            'product_image' => 'required',
+            'is_bio' => 'required',
+            'is_aop' => 'required',
+            'is_aoc' => 'required',
+            'is_igp' => 'required',
+            'is_stg' => 'required',
+            'is_labelrouge' => 'required',
+            'category_id' => 'required',
+            'farm_id' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->sendError('Incorrect product or missing parameters', $validator->errors());
+        }
+
+        $input = $request->all();
+
+        $product = Product::create($input);
+
+        return $this->sendResponse($product, 'Product created successfully.', 201);
     }
 
     /**
@@ -46,18 +71,13 @@ class ProductController extends BaseController
      */
     public function show($id)
     {
-        //
-    }
+        $product = Product::find($id);
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
+        if (is_null($product)) {
+            return $this->sendError('Product not found');
+        }
+
+        return $this->sendResponse($product, 'Product retrieved successfully.');
     }
 
     /**
@@ -69,7 +89,17 @@ class ProductController extends BaseController
      */
     public function update(Request $request, $id)
     {
-        //
+        $product = Product::find($id); // Find product by id
+
+        if (is_null($product)) {
+            return $this->sendError('Product not found'); // Return error if product not found
+        }
+
+        $input = $request->all();  // Get all the request data
+
+        $product->update($input);
+
+        return $this->sendResponse($product, 'Product updated successfully.');
     }
 
     /**
@@ -80,6 +110,14 @@ class ProductController extends BaseController
      */
     public function destroy($id)
     {
-        //
+        $product = Product::find($id);
+
+        if (is_null($product)) {
+            return $this->sendError('Product not found');
+        }
+
+        $product->delete();
+
+        return $this->sendResponse($product, 'Product deleted successfully.');
     }
 }

@@ -73,16 +73,56 @@ class AuthController extends BaseController
         return $this->sendResponse($success, 'User created successfully.');
     }
 
+    /**
+     * Sign in method for admin 
+     * 
+     * @return \Illuminate\Http\Response
+     */
     public function signinAdmin(Request $request)
     {
         if (Auth::guard('admin')->attempt(['email' => $request->email, 'password' => $request->password])) {
             $authAdmin = Auth::guard('admin')->user();
             $success['token'] =  $authAdmin->createToken('MaFermeLocaleAdmin')->plainTextToken;
-            $success['username'] =  $authAdmin->name;
+            
+            // create an array with the admin data
+            $adminData = array(
+                'token' => $success['token'],
+                'token_type' => 'bearer',
+                'admin' => [
+                    'id' => $authAdmin->id,
+                    'username' => $authAdmin->username,
+                    'email' => $authAdmin->email
+                ],
+            );
 
-            return $this->sendResponse($success, 'Admin signed in');
+            return $this->sendResponse($adminData, 'Admin signed in');
         } else {
-            return $this->sendError('Unauthorised.', ['error' => 'Unauthorised']);
+            return $this->sendError('The provided credentials does not match our records.', []);
         }
+    }
+
+    /**
+     * Sign out method for admin
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function signoutAdmin(Request $request)
+    {
+        $request->user('sanctum_admin')->currentAccessToken()->delete();
+        
+        return $this->sendResponse(null, 'Admin signed out.');
+    }
+
+    /**
+     * Sign out method for user
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function signoutUser(Request $request)
+    {
+        $request->user()->currentAccessToken()->delete();
+        $request->user()->signout();
+        
+        return $this->sendResponse(null, 'Signed out.');
     }
 }

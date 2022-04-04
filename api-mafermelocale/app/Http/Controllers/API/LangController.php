@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\LangResource;
+use App\Models\Lang;
 use Illuminate\Http\Request;
 
 class LangController extends BaseController
@@ -14,17 +16,17 @@ class LangController extends BaseController
      */
     public function index()
     {
-        //
-    }
+        $langs = QueryBuilder::for(Lang::with('currency'))
+            ->allowedFilters('name', 'code', 'currency.name', 'currency_id')
+            ->allowedSorts('name', 'code', 'currency.name')
+            ->paginate(20)
+            ->appends(request()->query());
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        if($langs->isempty()) {
+            return $this->sendError('There is no languages based on your filter');
+        }
+
+        return $this->sendResponse($langs, 'All languages retrieved.');
     }
 
     /**
@@ -35,7 +37,21 @@ class LangController extends BaseController
      */
     public function store(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'code' => 'required',
+            'currency_id' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return $this->sendError('Incorrect languages or missing parameters', $validator->errors());
+        }
+
+        $input = $request->all();
+
+        $lang = Lang::create($input);
+
+        return $this->sendResponse($lang, 'Language created successfully.', 201);
     }
 
     /**
@@ -46,19 +62,15 @@ class LangController extends BaseController
      */
     public function show($id)
     {
-        //
+        $lang = Lang::find($id);
+
+        if (is_null($lang)) {
+            return $this->sendError('Language not found');
+        }
+
+        return $this->sendResponse(new LangResource($lang), 'Language retrieved.');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
 
     /**
      * Update the specified resource in storage.
@@ -69,7 +81,28 @@ class LangController extends BaseController
      */
     public function update(Request $request, $id)
     {
-        //
+        $lang = Lang::find($id);
+
+        if (is_null($lang)) {
+            return $this->sendError('Language not found');
+        }
+
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'code' => 'required',
+            'currency_id' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return $this->sendError('Incorrect languages or missing parameters', $validator->errors());
+        }
+
+        $input = $request->all();
+
+        $lang->update($input);
+
+        return $this->sendResponse($lang, 'Language updated successfully.');
+
     }
 
     /**
@@ -80,6 +113,15 @@ class LangController extends BaseController
      */
     public function destroy($id)
     {
-        //
+        $lang = Lang::find($id);
+
+        if (is_null($lang)) {
+            return $this->sendError('Language not found.');
+        }
+
+        $lang->delete();
+
+        return $this->sendResponse($lang, 'Language deleted successfully.');
+
     }
 }

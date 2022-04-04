@@ -29,7 +29,7 @@ class AdressSeeder extends Seeder
         $lat = $resultats->features[0]->geometry->coordinates[1];
 
         Address::create([
-            "adresse" => "34 rue Paul Valéry",
+            "address" => "34 rue Paul Valéry",
             "postcode" => "31200",
             "city" => "Toulouse",
             "lon" => $lon,

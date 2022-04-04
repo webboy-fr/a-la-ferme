@@ -20,6 +20,22 @@ class Product extends Model
         'price',
         'product_image',
         'category_id',
-        'farm_id'
+        'farm_id',
+        'lang_id'
     ];
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+
+    public function farm()
+    {
+        return $this->belongsTo(Farm::class);
+    }
+
+    public function lang()
+    {
+        return $this->belongsTo(Lang::class);
+    }
 }

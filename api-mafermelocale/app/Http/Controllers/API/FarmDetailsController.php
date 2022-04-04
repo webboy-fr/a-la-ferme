@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Farm_detailsCollection;
+use App\Models\Farm_details;
 use Illuminate\Http\Request;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class FarmDetailsController extends BaseController
 {
@@ -14,7 +17,17 @@ class FarmDetailsController extends BaseController
      */
     public function index()
     {
-        //
+        $farmDetails = QueryBuilder::for(Farm_details::with('farm'))
+            ->allowedFilters('name', 'description', 'about')
+            ->allowedSorts('name', 'description', 'about')
+            ->paginate(20)
+            ->appends(request()->query());
+
+        if ($farmDetails->isEmpty()) {
+            return $this->sendError('There is no farm details based on your filters');
+        }
+
+        return $this->sendResponse(Farm_detailsCollection::collection($farmDetails), 'All farm details retrieved.');
     }
 
     /**

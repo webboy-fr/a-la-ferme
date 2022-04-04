@@ -18,7 +18,18 @@ class Category extends Model
     protected $fillable = [
         'name',
         'description',
-        'image_path'
+        'image_path',
+        'lang_id'
     ];
+
+    public function products()
+    {
+        return $this->hasMany(Product::class);
+    }
+
+    public function lang()
+    {
+        return $this->belongsTo(Lang::class);
+    }
 
 }

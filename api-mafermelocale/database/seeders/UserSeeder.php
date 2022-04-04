@@ -2,11 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Role;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 
 class UserSeeder extends Seeder
 {
@@ -17,14 +14,15 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('roles')->insert([
-            'name' => 'Farmer',
+        Role::create([
+            'name' => 'Agriculteur',
             'lang_id' => '1'
         ]);
 
-        DB::table('roles')->insert([
-            'name' => 'User',
+        Role::create([
+            'name' => 'Utilisateur',
             'lang_id' => '1'
         ]);
+
     }
 }

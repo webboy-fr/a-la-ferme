@@ -18,7 +18,7 @@ class CurrencySeeder extends Seeder
         Currency::truncate();
 
         $currency_list = array(
-            array("name" => "Euro", "iso_code" => "EUR", "lang_id" => '1')
+            array("name" => "Euro", "iso_code" => "EUR")
         );
 
         foreach ($currency_list as $key => $value) {

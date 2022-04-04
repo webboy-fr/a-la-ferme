@@ -17,7 +17,6 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('iso_code');
-            $table->foreignId('lang_id')->constrained('langs', 'id')->nullable(false); //Foreign key user_id on the id column in users tables
             $table->timestamps();
         });
     }

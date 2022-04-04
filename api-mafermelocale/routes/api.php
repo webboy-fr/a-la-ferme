@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\AddressController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -24,6 +25,10 @@ Route::post('register', [AuthController::class, 'signup']);
 Route::post('loginadmin', [AuthController::class, 'signinAdmin']);
 Route::post('registeradmin', [AuthController::class, 'signupAdmin']);
 
+Route::post('logout', [AuthController::class, 'signoutUser']);
+Route::post('logoutadmin', [AuthController::class, 'signoutAdmin']);
+
+
 //Route::get('users', [UserController::class, 'index']);
 
 /**
@@ -31,38 +36,36 @@ Route::post('registeradmin', [AuthController::class, 'signupAdmin']);
  */
 Route::middleware(['auth:sanctum_user'])->group(function () {
 
-    /**
-     * Here is listed all the route with the UserController class
-     * 
-     */
+    
     Route::controller(UserController::class)->group(function () {
 
-        Route::get('users', 'index');
-
-        Route::put('users/{id}', 'update');
-
-        Route::delete('users/{id}', 'destroy');
+        Route::get('/users/{id}/farms', 'showFarm');
 
     });
+
+    Route::apiResources([
+        'users' => UserController::class,
+        'addresses' => AddressController::class,
+        'categories' => CategoryController::class,
+        'farms' => FarmController::class,
+        'votes' => VoteController::class,
+    ]);
+
 });
 
 Route::middleware(['auth:sanctum_admin'])->group(function () {
+    
+    Route::apiResources([
+        'addresses' => AddressController::class,
+        'categories' => CategoryController::class,
+        'countries' => CountryController::class,
+        'currencies' => CurrencyController::class,
+        'farms' => FarmController::class,
+        'langs' => LangController::class,
+        'products' => ProductController::class,
+        'roles' => RoleController::class,
+        'users' => UserController::class,
+        'votes' => VoteController::class,
+    ]);
 
-    /**
-     * Here is listed all the route with the UserController class
-     * 
-     */
-    Route::controller(UserController::class)->group(function () {
-
-        Route::get('users/{id}', 'show');
-
-    });
-
-    Route::controller(CategoryController::class)->group(function () {
-
-        Route::get('categories', 'index');
-
-        Route::post('categories', 'store');
-
-    });
 });

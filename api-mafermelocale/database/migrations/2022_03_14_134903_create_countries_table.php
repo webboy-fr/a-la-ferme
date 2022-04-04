@@ -17,8 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('iso_code');
-            $table->foreignId('currency_id')->constrained('currencies', 'id')->nullable(false); //Foreign key user_id on the id column in users tables
-            $table->foreignId('lang_id')->constrained('langs', 'id')->nullable(false); //Foreign key user_id on the id column in users tables
+            $table->foreignId('currency_id')->default(1)->constrained('currencies', 'id')->cascadeOnUpdate(); //Foreign key user_id on the id column in users tables
             $table->timestamps();
         });
     }

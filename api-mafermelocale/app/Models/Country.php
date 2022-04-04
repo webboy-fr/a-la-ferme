@@ -12,6 +12,17 @@ class Country extends Model
 
     protected $fillable = [
         'name',
-        'iso_code'
+        'iso_code',
+        'currency_id'
     ];
+
+    public function addresses()
+    {
+        return $this->hasMany(Address::class);
+    }
+
+    public function currency()
+    {
+        return $this->belongsTo(Currency::class);
+    }
 }

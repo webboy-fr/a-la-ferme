@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\CountryResource;
+use App\Models\Country;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class CountryController extends BaseController
 {
@@ -14,17 +17,17 @@ class CountryController extends BaseController
      */
     public function index()
     {
-        //
-    }
+        $countries = QueryBuilder::for(Country::with('currency'))
+            ->allowedFilters('name', 'iso_code', 'currency.name')
+            ->allowedSorts('name', 'iso_code', 'currency.name')
+            ->paginate(20)
+            ->appends(request()->query());
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        if ($countries->isEmpty()) {
+            return $this->sendError('There is no countries based on your filter');
+        }
+
+        return $this->sendResponse($countries, 'All countries retrieved.');
     }
 
     /**
@@ -35,7 +38,19 @@ class CountryController extends BaseController
      */
     public function store(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'iso_code' => 'required|string|max:2',
+            'currency_id' => 'required|integer',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->sendError('Incorrect country or missing parameters', $validator->errors());
+        }
+
+        $country = Country::create($request->all());
+
+        return $this->sendResponse(new CountryResource($country), 'Country created successfully.');
     }
 
     /**
@@ -46,18 +61,13 @@ class CountryController extends BaseController
      */
     public function show($id)
     {
-        //
-    }
+        $country = Country::find($id);
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
+        if (is_null($country)) {
+            return $this->sendError('The country does not exist.');
+        }
+
+        return $this->sendResponse(new CountryResource($country), 'Country retrieved');
     }
 
     /**
@@ -69,7 +79,25 @@ class CountryController extends BaseController
      */
     public function update(Request $request, $id)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'iso_code' => 'required|string|max:2',
+            'currency_id' => 'required|integer',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->sendError('Incorrect country or missing parameters', $validator->errors());
+        }
+
+        $country = Country::find($id);
+
+        if (is_null($country)) {
+            return $this->sendError('The country does not exist.');
+        }
+
+        $country->update($request->all());
+
+        return $this->sendResponse(new CountryResource($country), 'Country updated successfully.');
     }
 
     /**
@@ -80,6 +108,14 @@ class CountryController extends BaseController
      */
     public function destroy($id)
     {
-        //
+        $country = Country::find($id);
+
+        if (is_null($country)) {
+            return $this->sendError('The country does not exist.');
+        }
+
+        $country->delete();
+
+        return $this->sendResponse(null, 'Country deleted successfully.');
     }
 }

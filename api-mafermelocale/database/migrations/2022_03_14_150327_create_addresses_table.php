@@ -20,8 +20,7 @@ return new class extends Migration
             $table->string('city');
             $table->decimal('lon', 10, 6);
             $table->decimal('lat', 10, 6);
-            $table->foreignId('country_id')->constrained('countries', 'id')->nullable(false); //Foreign key country_id on the id column in countries tables
-            $table->foreignId('user_id')->constrained('users', 'id')->nullable(false); //Foreign key user_id on the id column in users tables
+            $table->foreignId('country_id')->default(1)->constrained('countries', 'id')->cascadeOnUpdate(); //Foreign key country_id on the id column in countries tables
             $table->timestamps();
         });
     }

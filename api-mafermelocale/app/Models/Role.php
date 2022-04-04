@@ -17,10 +17,15 @@ class Role extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'name'
+        'name',
+        'lang_id'
     ];
 
     public function users() {
         return $this->hasMany(User::class);
+    }
+
+    public function lang() {
+        return $this->belongsTo(Lang::class);
     }
 }

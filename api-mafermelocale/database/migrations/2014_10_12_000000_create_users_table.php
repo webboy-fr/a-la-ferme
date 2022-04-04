@@ -22,7 +22,8 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
-            $table->foreignId('role_id')->constrained('roles', 'id')->default(2); //Foreign key role_id on the id column in roles tables
+            $table->foreignId('role_id')->default(2)->constrained('roles', 'id')->cascadeOnDelete()->nullOnDelete(); //Foreign key role_id on the id column in roles tables
+            $table->foreignId('address_id')->nullable()->constrained('addresses', 'id')->cascadeOnUpdate()->nullOnDelete(); //Foreign key role_id on the id column in roles tables
             $table->timestamps();
         });
     }

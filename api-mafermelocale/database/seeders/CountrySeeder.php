@@ -18,7 +18,7 @@ class CountrySeeder extends Seeder
         Country::truncate();
 
         $countries = [
-            ['name' => 'France', 'iso_code' => 'FR', 'currency_id' => '1', 'lang_id' => '1'],
+            ['name' => 'France', 'iso_code' => 'FR', 'currency_id' => '1'],
         ];
 
         foreach ($countries as $key => $value) {

@@ -15,9 +15,9 @@ return new class extends Migration
     {
         Schema::create('votes', function (Blueprint $table) {
             $table->id();
-            $table->unsignedSmallInteger('votes');
-            $table->foreignId('farm_id')->constrained('farms', 'id')->nullable(false); //Foreign key farm_id on the id column in farms tables
-            $table->foreignId('user_id')->constrained('users', 'id')->nullable(false); //Foreign key user_id on the id column in users tables
+            $table->unsignedTinyInteger('vote')->nullable(false);
+            $table->foreignId('farm_id')->constrained('farms', 'id')->cascadeOnDelete()->cascadeOnUpdate(); //Foreign key farm_id on the id column in farms tables
+            $table->foreignId('user_id')->constrained('users', 'id')->cascadeOnDelete()->cascadeOnUpdate(); //Foreign key user_id on the id column in users tables
             $table->timestamps();
         });
     }
