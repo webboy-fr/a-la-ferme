@@ -1,4 +1,4 @@
-# Project - A la ferme
+# Project - Ma Ferme Locale
 
 Within the framework of our training, Valentin HUARD and myself, Maud LEFORT, wish to create a project allowing both to learn and use two frameworks in a project and to answer a problem. Indeed, when we want to get local products from producers, we often lack information and resources to help these producers. To solve this problem, we want to create a site that would allow us to know around us the farms, farmers and producers who offer the sale of local products. Of course, a group of farmers can be present and offer their products individually or in groups.
 
@@ -16,9 +16,9 @@ This project allows to highlight local products, farmers, their jobs, their pass
 
 ## Tech Stack
 
-**Client :** React, React DOM, Semantic UI React, Mapbox
+**Client :** React, React DOM, Semantic UI, Mapbox
 
-**Server :** Laravel 8, Laravel UI, PHP 8.0.3+, MySQL
+**Server :** Laravel 8, PHP 8.0.3+, MySQL
 
 
 ## Run Locally
@@ -26,16 +26,16 @@ This project allows to highlight local products, farmers, their jobs, their pass
 Clone the project
 
 ```bash
-  git clone https://github.com/Github-Name/a-la-ferme.git
+  git clone https://github.com/Github-Name/projet-ma-ferme-locale.git
 ```
 
-Go to the project directory
+Go to the project directory (API)
 
 ```bash
-  cd a-la-ferme
+  cd api-ma-ferme-locale
 ```
 
-Install dependencies
+Install dependencies (API)
 
 ```bash
   composer install
