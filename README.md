@@ -38,7 +38,11 @@ Go to the project directory
 Install dependencies
 
 ```bash
-  installation.bat
+  install.bat
+```
+or
+```bash
+  install.sh
 ```
 
 Start the server
