@@ -46,6 +46,8 @@ CALL php artisan migrate
 
 CALL php artisan db:seed
 
+CALL php artisan key:generate
+
 CALL php artisan serve
 
 ENDLOCAL
