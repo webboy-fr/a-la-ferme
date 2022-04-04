@@ -35,11 +35,16 @@ Go to the project directory
   cd a-la-ferme
 ```
 
-Install dependencies and Start the server
+Install dependencies
 
 ```bash
   installation.bat
 ```
+
+Start the server
+
+- Go to http://127.0.0.1:8000
+- Click on the "Generate App Key" button (top right)
 
 ## Authors
 
