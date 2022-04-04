@@ -29,26 +29,17 @@ Clone the project
   git clone https://github.com/Github-Name/a-la-ferme.git
 ```
 
-Go to the project directory (API)
+Go to the project directory
 
 ```bash
-  cd api-ma-ferme-locale
+  cd a-la-ferme
 ```
 
-Install dependencies (API)
+Install dependencies and Start the server
 
 ```bash
-  composer install
-  npm install
+  installation.bat
 ```
-
-Start the server
-
-```bash
-  npm run dev
-  php artisan serve
-```
-
 
 ## Authors
 
