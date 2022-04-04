@@ -37,10 +37,16 @@ Go to the project directory
 
 Install dependencies
 
+-- Windows --
+
 ```bash
   install.bat
 ```
+
 or
+
+-- Linux --
+
 ```bash
   install.sh
 ```
