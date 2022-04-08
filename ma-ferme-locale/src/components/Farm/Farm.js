@@ -26,7 +26,7 @@ class Farm extends React.Component {
                 this.setState({
                     farms: response.data.data.data
                 });
-                console.log(this.state.farms);
+                console.log(this.state.farm);
             })
             .catch(error => console.error(error));
     }
