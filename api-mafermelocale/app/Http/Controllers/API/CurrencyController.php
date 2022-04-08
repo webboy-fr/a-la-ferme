@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Http\Controllers\Controller;
+use App\Http\Resources\Currency as CurrencyResource;
 use App\Models\Currency;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class CurrencyController extends BaseController
 {
@@ -15,7 +17,17 @@ class CurrencyController extends BaseController
      */
     public function index()
     {
-        //
+        $currencies = QueryBuilder::for(Currency::class)
+            ->allowedFilters('name', 'iso_code')
+            ->allowedSorts('name', 'iso_code')
+            ->paginate(20)
+            ->appends(request()->query());
+
+        if ($currencies->isEmpty()) {
+            return $this->sendError('There is no currencies based on your filter.');
+        }
+
+        return $this->sendResponse(CurrencyResource::collection($currencies), 'All currencies retrieved.');
     }
 
     /**
@@ -27,12 +39,12 @@ class CurrencyController extends BaseController
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required',
-            'iso_code' => 'required',
+            'name' => 'required|string|max:255',
+            'iso_code' => 'required|string|max:2',
         ]);
 
         if ($validator->fails()) {
-            return $this->sendError('Incorrect currency or missing parameters', $validator->errors());
+            return $this->sendError('Incorrect currency or missing parameters.', $validator->errors());
         }
 
         $input = $request->all();
@@ -54,10 +66,10 @@ class CurrencyController extends BaseController
 
         if (is_null($currency)) {
 
-            return $this->sendError('Currency not found.');
+            return $this->sendError('The currency does not exist.');
         }
 
-        return $this->sendResponse($currency, 'Currency retrieved successfully.');
+        return $this->sendResponse(new CurrencyResource($currency), 'Currency retrieved.');
     }
 
     /**
@@ -69,22 +81,21 @@ class CurrencyController extends BaseController
      */
     public function update(Request $request, $id)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required',
-            'iso_code' => 'required',
-        ]);
+        $currency = Currency::find($id);
 
-        if ($validator->fails()) {
-            return $this->sendError('Incorrect currency or missing parameters', $validator->errors());
+        if (is_null($currency)) {
+            return $this->sendError('The currency does not exist.');
         }
 
         $input = $request->all();
 
-        $currency = Currency::find($id);
+        $validator = Validator::make($input, [
+            'name' => 'required|string|max:255',
+            'iso_code' => 'required|string|max:2',
+        ]);
 
-        if (is_null($currency)) {
-
-            return $this->sendError('Currency not found.');
+        if ($validator->fails()) {
+            return $this->sendError('Incorrect currency or missing parameters.', $validator->errors());
         }
 
         $currency->update($input);
@@ -103,12 +114,11 @@ class CurrencyController extends BaseController
         $currency = Currency::find($id);
 
         if (is_null($currency)) {
-
-            return $this->sendError('Currency not found.');
+            return $this->sendError('The currency does not exist.');
         }
 
         $currency->delete();
 
-        return $this->sendResponse($currency, 'Currency deleted successfully.');
+        return $this->sendResponse([], 'Currency deleted.');
     }
 }

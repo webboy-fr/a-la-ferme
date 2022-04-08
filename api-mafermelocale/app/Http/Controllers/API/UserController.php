@@ -4,11 +4,12 @@ namespace App\Http\Controllers\API;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\API\BaseController as BaseController;
-use App\Http\Resources\FarmCollection;
+use App\Http\Resources\Farm as FarmResource;
+use App\Models\Farm;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
-use App\Http\Resources\UserResource;
-use App\Models\Farm;
+use Illuminate\Support\Facades\Validator;
+use App\Http\Resources\User as UserResource;
 use Spatie\QueryBuilder\QueryBuilder;
 
 class UserController extends BaseController
@@ -30,7 +31,7 @@ class UserController extends BaseController
             return $this->sendError('There is no users based on your filter');
         }
 
-        return $this->sendResponse($users, 'All users retrieved.');
+        return $this->sendResponse(UserResource::collection($users), 'All users retrieved.');
     }
 
     /**
@@ -46,7 +47,7 @@ class UserController extends BaseController
             return $this->sendError('The user does not exist.');
         }
         
-        return $this->sendResponse(new UserResource($user), 'User retrieved');
+        return $this->sendResponse(new UserResource($user), 'User retrieved.');
     }
 
     public function showFarm($id, Farm $farm)
@@ -57,7 +58,7 @@ class UserController extends BaseController
             return $this->sendError('The farm does not exist.');
         }
 
-        return $this->sendResponse(FarmCollection::collection($farm), 'Farm retrieved');
+        return $this->sendResponse(new FarmResource($farm), 'Farm retrieved');
     }
 
     /**
@@ -77,9 +78,23 @@ class UserController extends BaseController
             return $this->sendError('You can\'t modify another user !', [], 403); // Forbidden !
         }
 
+        $input = $request->all();
+
+        $validator = Validator::make($input, [
+            'first_name' => 'required|max:255',
+            'last_name' => 'required|max:255',
+            'username' => 'required',
+            'email' => 'required|email',
+            'password' => 'required'
+        ]);
+
+        if ($validator->fails()) { // if the validator fails 
+            return $this->sendError('Incorrect user or missing parameters', $validator->errors()); // return error message that role is not found 
+        }
+
         $user->update($request->all()); // Update the user with the requested parameters
 
-        return $this->sendResponse(new UserResource($user), 'User updated.'); // Return the updated user
+        return $this->sendResponse($user, 'User updated successfully.'); // Return the updated user
     }
 
     /**
@@ -101,6 +116,6 @@ class UserController extends BaseController
 
         $user->delete(); // Delete the user
 
-        return $this->sendResponse([], 'User deleted.'); // Return a success message that the user has been deleted
+        return $this->sendResponse([], 'User deleted.');
     }
 }

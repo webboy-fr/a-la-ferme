@@ -15,10 +15,12 @@ return new class extends Migration
     {
         Schema::create('farm_details', function (Blueprint $table) {
             $table->id();
-            $table->string('farm_image');
-            $table->string('name');
-            $table->string('description');
             $table->string('about');
+            $table->string('farm_banner');
+            $table->string('business_mail');
+            $table->string('phone');
+            $table->string('instagram_id');
+            $table->string('facebook_id');
             $table->foreignId('lang_id')->default(1)->constrained('langs', 'id')->cascadeOnUpdate(); //Foreign key farm_id on the id column in farms tables
             $table->timestamps();
         });

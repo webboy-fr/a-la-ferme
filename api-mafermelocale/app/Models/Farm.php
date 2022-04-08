@@ -16,10 +16,18 @@ class Farm extends Model
      * @var array<int, string>
      */
     protected $fillable = [
+        'name',
+        'farm_image',
+        'short_description',
         'address_id',
         'farm_details_id',
-        'user_id'
+        'user_id',
+        'lang_id'
     ];
+
+    public function lang() {
+        return $this->belongsTo(Lang::class);
+    }
 
     public function votes() {
         return $this->hasMany(Vote::class);

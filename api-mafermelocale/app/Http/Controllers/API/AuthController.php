@@ -3,22 +3,27 @@
 namespace App\Http\Controllers\API;
 
 use Illuminate\Http\Request;
-use App\Http\Controllers\API\BaseController as BaseController;
+use App\Http\Controllers\API\BaseController;
 use App\Models\Admin;
 use Illuminate\Support\Facades\Auth;
-use Validator;
+use Illuminate\Support\Facades\Validator;
 use App\Models\User;
-use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends BaseController
 {
+    /**
+     * Sign in method for admin
+     * 
+     * @return \Illuminate\Http\Response
+     */
     public function signin(Request $request)
     {
         if (!empty($request->email) && !empty($request->password)) {
+
             if (Auth::guard('user')->attempt(['email' => $request->email, 'password' => $request->password])) {
                 $authUser = Auth::user();
-                $success['token'] =  $authUser->createToken('MaFermeLocale')->plainTextToken;
+                $success['token'] = $authUser->createToken('MaFermeLocale')->plainTextToken;
 
                 // User data
                 $user = User::find($authUser->id)->get()->toArray();
@@ -28,13 +33,14 @@ class AuthController extends BaseController
                     }
                 }
 
-                return $this->sendResponse($success, 'User signed in');
+                return $this->sendResponse($success, 'User signed in.');
             } else {
                 return $this->sendError('Unauthorised.', ['error' => 'Unauthorised']);
             }
+
         } else {
             $error = [
-                'error' => 'Bad Request', 
+                'error' => 'Bad Request.', 
                 'email' => 'The email field is required.',
                 'password' => 'The password field is required.'
             ];
@@ -44,14 +50,15 @@ class AuthController extends BaseController
     }
 
     /**
-     * Signup method for a user
+     * Sign up method for user
      * 
+     * @return \Illuminate\Http\Response
      */
     public function signup(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'first_name' => 'required',
-            'last_name' => 'required',
+            'first_name' => 'required|string',
+            'last_name' => 'required|string',
             'email' => 'required|email',
             'password' => 'required',
             'confirm_password' => 'required|same:password',
@@ -68,10 +75,27 @@ class AuthController extends BaseController
         return $this->sendResponse($user, 'User created successfully.', 201);
     }
 
+    /**
+     * Sign out method for user
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function signoutUser(Request $request)
+    {
+        $request->user('sanctum_user')->currentAccessToken()->delete();
+        
+        return $this->sendResponse([], 'User Signed out.');
+    }
+
+    /**
+     * Sign up method for admin
+     * 
+     * @return \Illuminate\Http\Response
+     */
     public function signupAdmin(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'username' => 'required',
+            'username' => 'required|string',
             'email' => 'required|email',
             'password' => 'required',
             'confirm_password' => 'required|same:password',
@@ -132,18 +156,6 @@ class AuthController extends BaseController
     {
         $request->user('sanctum_admin')->currentAccessToken()->delete();
         
-        return $this->sendResponse(null, 'Admin signed out.');
-    }
-
-    /**
-     * Sign out method for user
-     * 
-     * @return \Illuminate\Http\Response
-     */
-    public function signoutUser(Request $request)
-    {
-        $request->user('sanctum_user')->currentAccessToken()->delete();
-        
-        return $this->sendResponse(null, 'User Signed out.');
+        return $this->sendResponse([], 'Admin signed out.');
     }
 }

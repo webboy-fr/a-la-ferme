@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Product as ProductRessource;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -24,10 +25,10 @@ class ProductController extends BaseController
             ->appends(request()->query());
 
         if($products->isempty()) {
-            return $this->sendError('There is no products based on your filters');
+            return $this->sendError('There is no products based on your filters.');
         }
 
-        return $this->sendResponse(Product::collection($products), 'All products retrieved.');
+        return $this->sendResponse(ProductRessource::collection($products), 'All products retrieved.');
     }
 
     /**
@@ -38,25 +39,25 @@ class ProductController extends BaseController
      */
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'product_name' => 'required',
+        $input = $request->all();
+
+        $validator = Validator::make($input, [
+            'product_name' => 'required|string|max:255',
             'price' => 'required',
-            'product_image' => 'required',
-            'is_bio' => 'required',
-            'is_aop' => 'required',
-            'is_aoc' => 'required',
-            'is_igp' => 'required',
-            'is_stg' => 'required',
-            'is_labelrouge' => 'required',
-            'category_id' => 'required',
-            'farm_id' => 'required',
+            'product_image' => 'required|string',
+            'is_bio' => 'required|boolean',
+            'is_aop' => 'required|boolean',
+            'is_aoc' => 'required|boolean',
+            'is_igp' => 'required|boolean',
+            'is_stg' => 'required|boolean',
+            'is_labelrouge' => 'required|boolean',
+            'category_id' => 'required|integer',
+            'farm_id' => 'required|integer',
         ]);
 
         if ($validator->fails()) {
-            return $this->sendError('Incorrect product or missing parameters', $validator->errors());
+            return $this->sendError('Incorrect product or missing parameters.', $validator->errors());
         }
-
-        $input = $request->all();
 
         $product = Product::create($input);
 
@@ -74,10 +75,10 @@ class ProductController extends BaseController
         $product = Product::find($id);
 
         if (is_null($product)) {
-            return $this->sendError('Product not found');
+            return $this->sendError('The product does not exist.');
         }
 
-        return $this->sendResponse($product, 'Product retrieved successfully.');
+        return $this->sendResponse(new ProductRessource($product), 'Product retrieved.');
     }
 
     /**
@@ -92,10 +93,28 @@ class ProductController extends BaseController
         $product = Product::find($id); // Find product by id
 
         if (is_null($product)) {
-            return $this->sendError('Product not found'); // Return error if product not found
+            return $this->sendError('The product does not exist.');
         }
-
+        
         $input = $request->all();  // Get all the request data
+
+        $validator = Validator::make($input, [
+            'product_name' => 'required|string|max:255',
+            'price' => 'required',
+            'product_image' => 'required|string',
+            'is_bio' => 'required|boolean',
+            'is_aop' => 'required|boolean',
+            'is_aoc' => 'required|boolean',
+            'is_igp' => 'required|boolean',
+            'is_stg' => 'required|boolean',
+            'is_labelrouge' => 'required|boolean',
+            'category_id' => 'required|integer',
+            'farm_id' => 'required|integer',
+        ]);
+   
+        if($validator->fails()){
+            return $this->sendError('Incorrect product or missing parameters.', $validator->errors());       
+        }
 
         $product->update($input);
 
@@ -113,11 +132,11 @@ class ProductController extends BaseController
         $product = Product::find($id);
 
         if (is_null($product)) {
-            return $this->sendError('Product not found');
+            return $this->sendError('The product does not exist.');
         }
 
         $product->delete();
 
-        return $this->sendResponse($product, 'Product deleted successfully.');
+        return $this->sendResponse([], 'Product deleted.');
     }
 }

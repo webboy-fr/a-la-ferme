@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('name')->unique();
             $table->string('description');
-            $table->string('image_path');
+            $table->string('category_image');
             $table->foreignId('lang_id')->default(1)->constrained('langs', 'id')->cascadeOnUpdate(); //Foreign key lang_id on the id column in langs tables
             $table->timestamps();
         });

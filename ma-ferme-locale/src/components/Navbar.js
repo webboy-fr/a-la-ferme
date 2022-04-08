@@ -40,7 +40,7 @@ class Navbar extends React.Component {
                             <li><Link to="/farms">Les fermes</Link></li>
                             <li><a href="#!">Le projet</a></li>
                             <li><a href="#!">Aide</a></li>
-                            <li><a href="/login">Connexion</a></li>
+                            <li><a href="/login">Connexion test</a></li>
                         </ul>
                     </nav>
                 </div>

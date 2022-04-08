@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class CurrencyResource extends JsonResource
+class Lang extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -18,8 +18,11 @@ class CurrencyResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'iso_code' => $this->iso_code,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'langage_local' => $this->langage_local,
+            'date_format_lite' => $this->date_format_lite,
+            'date_format_full' => $this->date_format_full,
+            'created_at' => $this->created_at->format('d/m/Y'),
+            'updated_at' => $this->updated_at->format('d/m/Y'),
         ];
     }
 }

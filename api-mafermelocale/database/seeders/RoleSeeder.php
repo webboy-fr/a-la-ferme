@@ -14,15 +14,15 @@ class RoleSeeder extends Seeder
      */
     public function run()
     {
-        Role::create([
-            'name' => 'Agriculteur',
-            'lang_id' => '1'
-        ]);
+        Role::truncate();
 
-        Role::create([
-            'name' => 'Utilisateur',
-            'lang_id' => '1'
-        ]);
+        $roles_list = [
+            ['name' => 'Agriculteur', 'lang_id' => '1'],
+            ['name' => 'User', 'lang_id' => '1']
+        ];
 
+        foreach ($roles_list as $value) {
+            Role::create($value);
+        }
     }
 }
