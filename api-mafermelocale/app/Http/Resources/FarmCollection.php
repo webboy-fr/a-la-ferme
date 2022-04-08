@@ -15,13 +15,10 @@ class FarmCollection extends ResourceCollection
     public function toArray($request)
     {
         return [
-            'id' => $this->id,
-            'name' => $this->name,
-            'address_id' => $this->address_id,
-            'farm_details_id' => $this->farm_details_id,
-            'user_id' => $this->user_id,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'data' => $this->collection,
+            'links' => [
+                'self' => 'link-value',
+            ],
         ];
     }
 }

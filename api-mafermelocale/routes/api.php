@@ -31,15 +31,10 @@ Route::post('logoutadmin', [AuthController::class, 'signoutAdmin']);
 
 Route::get('farms', [FarmController::class, 'index']);
 
-
-//Route::get('users', [UserController::class, 'index']);
-
 /**
  * Only authenticated users can call the route named here
  */
-Route::middleware(['auth:sanctum_user'])->group(function () {
-
-    
+Route::middleware(['auth:sanctum_user'])->group(function () {   
     Route::controller(UserController::class)->group(function () {
 
         Route::get('/users/{id}/farms', 'showFarm');
@@ -50,10 +45,8 @@ Route::middleware(['auth:sanctum_user'])->group(function () {
         'users' => UserController::class,
         'addresses' => AddressController::class,
         'categories' => CategoryController::class,
-        'farms' => FarmController::class,
         'votes' => VoteController::class,
     ]);
-
 });
 
 Route::middleware(['auth:sanctum_admin'])->group(function () {
@@ -63,7 +56,6 @@ Route::middleware(['auth:sanctum_admin'])->group(function () {
         'categories' => CategoryController::class,
         'countries' => CountryController::class,
         'currencies' => CurrencyController::class,
-        'farms' => FarmController::class,
         'langs' => LangController::class,
         'products' => ProductController::class,
         'roles' => RoleController::class,

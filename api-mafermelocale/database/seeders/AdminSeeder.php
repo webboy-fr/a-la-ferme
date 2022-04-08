@@ -3,11 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\Admin;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 
 class AdminSeeder extends Seeder
 {
@@ -21,7 +18,7 @@ class AdminSeeder extends Seeder
         Admin::create([
             'username' => 'Admin',
             'email' => 'admin@mafermelocale.com',
-            'password' => 'Admin123'
+            'password' => Hash::make('Admin123')
         ]);
     }
 }
