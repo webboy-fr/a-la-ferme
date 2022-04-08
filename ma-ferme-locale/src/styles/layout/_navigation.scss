@@ -2,13 +2,20 @@
 
 $content-width: 1000px;
 $nav-height: 70px;
-$nav-background: $white;
 $nav-font-color: $black;
 $link-hover-color: $orange;
 
 .navigation {
     height: $nav-height;
-    background: $nav-background;
+    background: $black;
+    background: -moz-linear-gradient(180deg, rgba(0, 0, 0, 0.05) 0%, rgba(255, 255, 255, 0) 100%);
+    background: -webkit-linear-gradient(180deg, rgba(0, 0, 0, 0.05) 0%, rgba(255, 255, 255, 0) 100%);
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.05) 0%, rgba(255, 255, 255, 0) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#000000", endColorstr="#ffffff", GradientType=1);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
 }
 
 .nav-container {
@@ -47,7 +54,6 @@ nav {
                 display: block;
                 padding: 10px 20px 0 20px;
                 line-height: 50px;
-                background: $nav-background;
                 color: $nav-font-color;
                 text-decoration: none;
 
@@ -98,7 +104,6 @@ nav {
     position: absolute;
     top: 0;
     right: 0;
-    background: $nav-background;
     height: $nav-height;
     width: $nav-height;
 }

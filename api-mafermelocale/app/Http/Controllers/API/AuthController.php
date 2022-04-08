@@ -15,13 +15,39 @@ class AuthController extends BaseController
 {
     public function signin(Request $request)
     {
+<<<<<<< HEAD
         if (Auth::guard('user')->attempt(['email' => $request->email, 'password' => $request->password])) {
             $authUser = Auth::user();
             $success['token'] =  $authUser->createToken('MaFermeLocale')->plainTextToken;
 
             return $this->sendResponse($user, 'User signed in');
+=======
+        if (!empty($request->email) && !empty($request->password)) {
+            if (Auth::guard('user')->attempt(['email' => $request->email, 'password' => $request->password])) {
+                $authUser = Auth::user();
+                $success['token'] =  $authUser->createToken('MaFermeLocale')->plainTextToken;
+
+                // User data
+                $user = User::find($authUser->id)->get()->toArray();
+                foreach ($user as $valueUser){
+                    foreach ($valueUser as $keyPropUser => $valuePropUser) {
+                        $success[$keyPropUser] = $valuePropUser;
+                    }
+                }
+
+                return $this->sendResponse($success, 'User signed in');
+            } else {
+                return $this->sendError('Unauthorised.', ['error' => 'Unauthorised']);
+            }
+>>>>>>> b825f8337f2b76a33af70c1b48c1c1563fc54746
         } else {
-            return $this->sendError('Unauthorised.', ['error' => 'Unauthorised']);
+            $error = [
+                'error' => 'Bad Request', 
+                'email' => 'The email field is required.',
+                'password' => 'The password field is required.'
+            ];
+
+            return $this->sendError('Bad Request.', $error, 400);
         }
     }
 
@@ -34,22 +60,20 @@ class AuthController extends BaseController
         $validator = Validator::make($request->all(), [
             'first_name' => 'required',
             'last_name' => 'required',
-            'username' => 'required',
             'email' => 'required|email',
             'password' => 'required',
             'confirm_password' => 'required|same:password',
         ]);
 
         if ($validator->fails()) {
-            return $this->sendError('Error validation', $validator->errors());
+            return $this->sendError('Error validation', $validator->errors(), 400);
         }
 
         $input = $request->all();
         $input['password'] = Hash::make($input['password']);
         $user = User::create($input);
-        $success['name'] =  $user->first_name;
 
-        return $this->sendResponse($success, 'User created successfully.');
+        return $this->sendResponse($user, 'User created successfully.', 201);
     }
 
     public function signupAdmin(Request $request)
@@ -57,19 +81,19 @@ class AuthController extends BaseController
         $validator = Validator::make($request->all(), [
             'username' => 'required',
             'email' => 'required|email',
-            'password' => 'required'
+            'password' => 'required',
+            'confirm_password' => 'required|same:password',
         ]);
 
         if ($validator->fails()) {
-            return $this->sendError('Error validation', $validator->errors());
+            return $this->sendError('Error validation', $validator->errors(), 400);
         }
 
         $input = $request->all();
         $input['password'] = Hash::make($input['password']);
         $admin = Admin::create($input);
-        $success['name'] =  $admin->username;
 
-        return $this->sendResponse($success, 'User created successfully.');
+        return $this->sendResponse($admin, 'Admin created successfully.', 201);
     }
 
     /**
@@ -79,24 +103,31 @@ class AuthController extends BaseController
      */
     public function signinAdmin(Request $request)
     {
-        if (Auth::guard('admin')->attempt(['email' => $request->email, 'password' => $request->password])) {
-            $authAdmin = Auth::guard('admin')->user();
-            $success['token'] =  $authAdmin->createToken('MaFermeLocaleAdmin')->plainTextToken;
-            
-            // create an array with the admin data
-            $adminData = array(
-                'token' => $success['token'],
-                'token_type' => 'bearer',
-                'admin' => [
-                    'id' => $authAdmin->id,
-                    'username' => $authAdmin->username,
-                    'email' => $authAdmin->email
-                ],
-            );
+        if (!empty($request->email) && !empty($request->password)) {
+            if (Auth::guard('admin')->attempt(['email' => $request->email, 'password' => $request->password])) {
+                $authAdmin = Auth::guard('admin')->user();
+                $success['token'] =  $authAdmin->createToken('MaFermeLocaleAdmin')->plainTextToken;
+                
+                // Admin data
+                $admin = Admin::find($authAdmin->id)->get()->toArray();
+                foreach ($admin as $valueAdmin){
+                    foreach ($valueAdmin as $keyPropAdmin => $valuePropAdmin) {
+                        $success[$keyPropAdmin] = $valuePropAdmin;
+                    }
+                }
 
-            return $this->sendResponse($adminData, 'Admin signed in');
+                return $this->sendResponse($success, 'Admin signed in');
+            } else {
+                return $this->sendError('Unauthorised.', ['error' => 'Unauthorised']);
+            }
         } else {
-            return $this->sendError('The provided credentials does not match our records.', []);
+            $error = [
+                'error' => 'Bad Request', 
+                'email' => 'The email field is required.',
+                'password' => 'The password field is required.'
+            ];
+
+            return $this->sendError('Bad Request.', $error, 400);
         }
     }
 
@@ -119,8 +150,12 @@ class AuthController extends BaseController
      */
     public function signoutUser(Request $request)
     {
+<<<<<<< HEAD
         $request->user()->currentAccessToken()->delete();
+=======
+        $request->user('sanctum_user')->currentAccessToken()->delete();
+>>>>>>> b825f8337f2b76a33af70c1b48c1c1563fc54746
         
-        return $this->sendResponse(null, 'Signed out.');
+        return $this->sendResponse(null, 'User Signed out.');
     }
 }
