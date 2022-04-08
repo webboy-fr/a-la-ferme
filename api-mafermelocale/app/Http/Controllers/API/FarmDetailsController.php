@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Http\Resources\Farm_details as Farm_detailsResource;
 use App\Models\Farm_details;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use Spatie\QueryBuilder\QueryBuilder;
 
 class FarmDetailsController extends BaseController

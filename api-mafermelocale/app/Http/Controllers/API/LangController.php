@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Lang as LangResource;
 use App\Models\Lang;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Spatie\QueryBuilder\QueryBuilder;
 

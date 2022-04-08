@@ -8,6 +8,7 @@ use App\Http\Resources\Farm as FarmResource;
 use App\Models\Farm;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use Illuminate\Support\Facades\Validator;
 use App\Http\Resources\User as UserResource;
 use Spatie\QueryBuilder\QueryBuilder;
 
