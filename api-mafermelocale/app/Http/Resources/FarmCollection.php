@@ -6,6 +6,7 @@ use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class FarmCollection extends ResourceCollection
 {
+
     /**
      * Transform the resource into an array.
      *
@@ -21,4 +22,5 @@ class FarmCollection extends ResourceCollection
             ],
         ];
     }
+    
 }

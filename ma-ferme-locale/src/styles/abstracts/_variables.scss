@@ -1,0 +1,29 @@
+@import url('https://fonts.googleapis.com/css2?family=Karla&family=Rubik:wght@700&display=swap');
+
+$white: #fff;
+$black: #000;
+
+// create a variable for the font-family with the best support
+$heading-font: 'Rubik', Arial, Verdana, sans-serif;
+$text-font: 'Karla', Arial, Verdana, sans-serif;
+
+$breakpoints: (
+  'small':  ( max-width:  767px ),
+  'medium': ( max-width:  992px ),
+  'large':  ( max-width: 1200px )
+) !default;
+
+/*
+
+    Light theme colors
+
+*/
+
+$orange: #EF7E0E;
+
+
+/*
+
+    Dark theme colors
+
+*/
