@@ -29,12 +29,6 @@ Clone the project
   git clone https://github.com/Github-Name/a-la-ferme.git
 ```
 
-Go to the project directory
-
-```bash
-  cd a-la-ferme
-```
-
 Install dependencies and Start the server
 
 -- Windows --

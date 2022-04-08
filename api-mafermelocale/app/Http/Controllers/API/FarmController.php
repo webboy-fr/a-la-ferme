@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Resources\Farm as FarmCollection;
 use App\Models\Farm;
+use App\Models\Address;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -19,6 +20,7 @@ class FarmController extends BaseController
     public function index()
     {
         $farms = QueryBuilder::for(Farm::class)
+            ->allowedIncludes(['address', 'farm_detail'])
             ->allowedFilters('name', 'address.postcode', 'address.city')
             ->allowedSorts('name', 'address.postcode', 'address.city')
             ->paginate(20)
