@@ -33,6 +33,11 @@ class Lang extends Model
         return $this->hasMany(Category::class);
     }
 
+    public function farms()
+    {
+        return $this->hasMany(Farm::class);
+    }
+
     public function farm_details()
     {
         return $this->hasMany(Farm_details::class);

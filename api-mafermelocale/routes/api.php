@@ -30,6 +30,7 @@ Route::post('logout', [AuthController::class, 'signoutUser']);
 Route::post('logoutadmin', [AuthController::class, 'signoutAdmin']);
 
 Route::get('farms', [FarmController::class, 'index']);
+Route::get('farms/{longitude}/{latitude}/{radius}', [FarmController::class, 'getFarmsByRadius']);
 
 /**
  * Only authenticated users can call the route named here

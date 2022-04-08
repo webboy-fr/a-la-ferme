@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
-class Farm_detailsCollection extends ResourceCollection
+class Farm_details extends ResourceCollection
 {
     /**
      * Transform the resource collection into an array.
@@ -16,13 +16,15 @@ class Farm_detailsCollection extends ResourceCollection
     {
         return [
             'id' => $this->id,
-            'farm_image' => $this->farm_image,
-            'name' => $this->name,
-            'description' => $this->description,
+            'farm_banner' => $this->farm_banner,
             'about' => $this->about,
+            'buisness_mail' => $this->buisness_mail,
+            'phone' => $this->phone,
+            'instagram_id' => $this->instagram_id,
+            'facebook_id' => $this->facebook_id,
             'lang_id' => $this->lang_id,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'created_at' => $this->created_at->format('d/m/Y'),
+            'updated_at' => $this->updated_at->format('d/m/Y'),
         ];
     }
 }

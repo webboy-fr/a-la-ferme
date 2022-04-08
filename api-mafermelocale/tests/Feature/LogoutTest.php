@@ -18,7 +18,7 @@ class LogoutTest extends TestCase
      */
     public function testUserIsLoggedOutProperly()
     {
-        User::create([
+        $user = User::create([
             'first_name' => 'Test',
             'last_name' => 'Login',
             'email' => 'testlogin@user.com',
@@ -32,7 +32,10 @@ class LogoutTest extends TestCase
 
         $this->json('POST', 'api/login', $userTest, $headers)->assertStatus(200);
 
-        $this->json('POST', 'api/logout')
+        $token = $user->generateToken();
+        $header = ['Authorization' => "Bearer $token"];
+
+        $this->json('POST', 'api/logout', $header)
             ->assertStatus(200)
             ->assertJson([
                 "success" => true,
@@ -50,7 +53,7 @@ class LogoutTest extends TestCase
      */
     public function testAdminIsLoggedOutProperly()
     {
-        Admin::create([
+        $admin = Admin::create([
             'username' => 'Test Login',
             'email' => 'testlogin@admin.com',
             'password' => Hash::make('Admin123')
@@ -59,10 +62,12 @@ class LogoutTest extends TestCase
         $headers = ['Accept' => 'application/json'];
         $adminTest = ['email' => 'testlogin@admin.com', 'password' => 'Admin123'];
 
-        $this->json('POST', 'api/loginadmin', $adminTest, $headers)
-            ->assertStatus(200);
+        $this->json('POST', 'api/loginadmin', $adminTest, $headers)->assertStatus(200);
 
-        $this->json('POST', 'api/logoutadmin')
+        $token = $admin->generateToken();
+        $header = ['Authorization' => "Bearer $token"];
+
+        $this->json('POST', 'api/logoutadmin', $header)
             ->assertStatus(200)
             ->assertJson([
                 "success" => true,
@@ -81,7 +86,7 @@ class LogoutTest extends TestCase
     public function testAdminWithNullToken()
     {
         // Simulating login
-        Admin::create([
+        $admin = Admin::create([
             'username' => 'Test Login',
             'email' => 'testlogin@admin.com',
             'password' => Hash::make('Admin123')
@@ -90,8 +95,11 @@ class LogoutTest extends TestCase
         $headers = ['Accept' => 'application/json'];
         $adminTest = ['email' => 'testlogin@admin.com', 'password' => 'Admin123'];
 
+        $token = $admin->generateToken();
+        $header = ['Authorization' => "Bearer $token"];
+
         $this->json('POST', 'api/loginadmin', $adminTest, $headers)->assertStatus(200);
-        $this->json('POST', 'api/logoutadmin')->assertStatus(200);
+        $this->json('POST', 'api/logoutadmin', $header)->assertStatus(200);
 
         $this->json('GET', 'api/roles', [], $headers)->assertStatus(401);
 

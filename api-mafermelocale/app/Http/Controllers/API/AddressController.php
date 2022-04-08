@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\AddressFinder;
-use App\Http\Resources\AddressCollection;
+use App\Http\Resources\Address as AddressResource;
 use App\Models\Address;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -28,7 +28,7 @@ class AddressController extends BaseController
             return $this->sendError('There is no users based on your filter');
         }
 
-        return $this->sendResponse(AddressCollection::collection($addresses), 'All users retrieved.');
+        return $this->sendResponse(AddressResource::collection($addresses), 'All addresses retrieved.');
     }
 
     /**
@@ -40,9 +40,9 @@ class AddressController extends BaseController
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'address' => 'required',
-            'postcode' => 'required',
-            'city' => 'required'
+            'address' => 'required|string',
+            'postcode' => 'required|regex:/^(([1-95]{2}|2A|2B)[0-9]{3})$|^[971-974]$/',
+            'city' => 'required|string|max:255'
         ]);
 
         if ($validator->fails()) {
@@ -78,7 +78,7 @@ class AddressController extends BaseController
             return $this->sendError('The address does not exist.');
         }
         
-        return $this->sendResponse(new AddressCollection($address), 'Address retrieved');
+        return $this->sendResponse(new AddressResource($address), 'Address retrieved');
     }
 
     /**
@@ -101,9 +101,9 @@ class AddressController extends BaseController
         }
 
         $validator = Validator::make($request->all(), [
-            'address' => 'required',
-            'postcode' => 'required',
-            'city' => 'required'
+            'address' => 'required|string',
+            'postcode' => 'required|regex:/^(([1-95]{2}|2A|2B)[0-9]{3})$|^[971-974]$/',
+            'city' => 'required|string|max:255'
         ]);
 
         if ($validator->fails()) {
@@ -143,6 +143,6 @@ class AddressController extends BaseController
             return $this->sendError('You are not authorized to delete this address.', [], 403); // 403 forbidden
         }
         
-        return $this->sendResponse([], 'Address deleted');
+        return $this->sendResponse([], 'Address deleted.');
     }
 }

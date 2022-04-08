@@ -6,8 +6,8 @@ use App\Models\Vote;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
-use Laravel\Sanctum\Sanctum;
 use Spatie\QueryBuilder\QueryBuilder;
+use App\Http\Resources\Vote as VoteResource;
 
 class VoteController extends BaseController
 {
@@ -40,8 +40,8 @@ class VoteController extends BaseController
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'user_id' => 'required',
-            'farm_id' => 'required',
+            'user_id' => 'required|integer',
+            'farm_id' => 'required|integer',
             'vote' => 'required|min:1|max:5'
         ]);
 
@@ -66,7 +66,7 @@ class VoteController extends BaseController
         $vote = Vote::find($id);
 
         if (is_null($vote)) {
-            return $this->sendError('Vote not found');
+            return $this->sendError('The vote does not exist.');
         }
 
         return $this->sendResponse($vote, 'Vote retrieved successfully.');
@@ -92,17 +92,17 @@ class VoteController extends BaseController
             return $this->sendError('You are not authorized to edit this vote');
         }
 
-        $validator = Validator::make($request->all(), [
-            'user_id' => 'required',
-            'farm_id' => 'required',
+        $input = $request->all();
+
+        $validator = Validator::make($input, [
+            'user_id' => 'required|integer',
+            'farm_id' => 'required|integer',
             'vote' => 'required|min:1|max:5'
         ]);
 
         if ($validator->fails()) { // if the validator fails 
             return $this->sendError('Incorrect vote or missing parameters', $validator->errors()); // return error message that role is not found 
         }
-
-        $input = $request->all();
         
         $vote->update($input);
 
@@ -120,7 +120,7 @@ class VoteController extends BaseController
         $vote = Vote::find($id);
 
         if (is_null($vote)) {
-            return $this->sendError('Vote not found');
+            return $this->sendError('The vote does not exist.');
         }
 
         if (Auth::guard('sanctum_user')->user()->id != $id) {
@@ -129,6 +129,6 @@ class VoteController extends BaseController
 
         $vote->delete();
 
-        return $this->sendResponse($vote, 'Vote deleted successfully.');
+        return $this->sendResponse([], 'Vote deleted.');
     }
 }

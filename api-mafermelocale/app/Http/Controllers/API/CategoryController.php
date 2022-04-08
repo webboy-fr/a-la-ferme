@@ -3,11 +3,12 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\API\BaseController;
-use App\Http\Resources\CategoryCollection;
+use App\Http\Resources\Category as CategoryResource;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class CategoryController extends BaseController
 {
@@ -26,10 +27,10 @@ class CategoryController extends BaseController
             ->appends(request()->query());
 
         if($categories->isempty()) {
-            return $this->sendError('There is no categories based on your filter');
+            return $this->sendError('There is no categories based on your filter.');
         }
 
-        return $this->sendResponse($categories, 'All categories retrieved.');
+        return $this->sendResponse(CategoryResource::collection($categories), 'All categories retrieved.');
     }
 
     /**
@@ -43,37 +44,25 @@ class CategoryController extends BaseController
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'description' => 'required',
-            'image' => 'required|image:jpeg,png,jpg|max:2048'
+            'category_image' => 'required|image:jpeg,png,jpg|max:2048'
         ]);
 
         if ($validator->fails()) {
-            return $this->sendError('Error validation', $validator->errors());
+            return $this->sendError('Incorrect category or missing parameters.', $validator->errors());
         }
 
         // Get the image file from the request and store it in the storage
-        $uploadFolder = 'mafermelocale/images/' . date('Y') . '/' . date('m');
+        $uploadFolder = 'mafermelocale/images/categories/' . date('Y') . '/' . date('m');
         $image = $request->file('image');
         $image_uploaded_path = $image->store($uploadFolder, 'public');
         
-
         // Create the category and save it in the database
         $input = $request->all();
-        $input['image_path'] = Storage::url($image_uploaded_path);
+        $input['category_image'] = Storage::url($image_uploaded_path);
+
         $category = Category::create($input);
 
-        // Create an array with the category and the image path
-        $uploadedImageResponse = array(
-            "name" => $category->name,
-            "description" => $category->description,
-            "image" => array(
-                "image_name" => basename($image_uploaded_path),
-                "image_path" => Storage::url($image_uploaded_path),
-                "mime" => $image->getClientMimeType()
-            )
-        );
-
-        // Return the response with the category created and the image path in the response body
-        return $this->sendResponse($uploadedImageResponse, 200);
+        return $this->sendResponse($category, 'Categroy created successfully.', 201);
     }
 
     /**
@@ -89,7 +78,7 @@ class CategoryController extends BaseController
             return $this->sendError('The category does not exist.');
         }
 
-        return $this->sendResponse(CategoryCollection::collection($category), 'Category retrieved');
+        return $this->sendResponse(new CategoryResource($category), 'Category retrieved.');
     }
 
     /**
@@ -101,49 +90,41 @@ class CategoryController extends BaseController
      */
     public function update(Request $request, $id) 
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required',
-            'description' => 'required',
-            'image' => 'image:jpeg,png,jpg|max:2048'
-        ]);
-
-        if ($validator->fails()) {
-            return $this->sendError('Error validation', $validator->errors());
-        }
-
         $category = Category::find($id);
 
         if (is_null($category)) {
             return $this->sendError('The category does not exist.');
         }
 
-        //get the category image path and delete the image from storage
-        $image_path = $category->image_path; // get the image path from the category object 
-        Storage::delete($image_path); // delete the image from storage 
+        $input = $request->all();
+
+        $validator = Validator::make($input, [
+            'name' => 'required',
+            'description' => 'required',
+            'category_image' => 'required|image:jpeg,png,jpg|max:2048'
+        ]);
+
+        if ($validator->fails()) {
+            return $this->sendError('Incorrect category or missing parameters.', $validator->errors());
+        }
+
+        // Get the category image path and delete the image from storage
+        $category_image = $category->category_image; // get the image path from the category object 
+        Storage::delete($category_image); // delete the image from storage 
 
         // upload the new image 
-        $uploadFolder = 'mafermelocale/images/' . date('Y') . '/' . date('m');
+        $uploadFolder = 'mafermelocale/images/categories/' . date('Y') . '/' . date('m');
         $image = $request->file('image');
         $image_uploaded_path = $image->store($uploadFolder, 'public');
 
         /**
          * Update the category object with the new image path
          */
-        $input = $request->all();
-        $input['image_path'] = Storage::url($image_uploaded_path);
+        $input['category_image'] = Storage::url($image_uploaded_path);
+
         $category->update($input);
 
-        $uploadedImageResponse = array(
-            "name" => $category->name,
-            "description" => $category->description,
-            "image" => array(
-                "image_name" => basename($image_uploaded_path),
-                "image_path" => Storage::url($image_uploaded_path),
-                "mime" => $image->getClientMimeType()
-            )
-        );
-
-        return $this->sendResponse($uploadedImageResponse, 200);
+        return $this->sendResponse($category, 'Address updated successfully.');
     }
 
     /**
@@ -160,12 +141,12 @@ class CategoryController extends BaseController
             return $this->sendError('The category does not exist.');
         }
 
-        //get the category image path and delete the image from storage
-        $image_path = $category->image_path; // get the image path from the category object 
-        Storage::delete($image_path); // delete the image from storage 
+        // Get the category image path and delete the image from storage
+        $category_image = $category->category_image; // Get the image path from the category object 
+        Storage::delete($category_image); // Delete the image from storage 
 
         $category->delete();
 
-        return $this->sendResponse($category, 'Category deleted');
+        return $this->sendResponse([], 'Category deleted.');
     }
 }

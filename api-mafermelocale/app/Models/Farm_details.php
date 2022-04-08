@@ -16,10 +16,12 @@ class Farm_details extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'farm_image',
-        'name',
-        'description',
         'about',
+        'farm_banner',
+        'business_mail',
+        'phone',
+        'instagram_id',
+        'facebook_id',
         'lang_id'
     ];
 

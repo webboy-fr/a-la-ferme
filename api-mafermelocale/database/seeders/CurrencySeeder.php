@@ -22,9 +22,7 @@ class CurrencySeeder extends Seeder
         );
 
         foreach ($currency_list as $key => $value) {
-
             Currency::create($value);
-
         }
     }
 }

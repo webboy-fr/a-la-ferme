@@ -3,9 +3,10 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\LangResource;
+use App\Http\Resources\Lang as LangResource;
 use App\Models\Lang;
 use Illuminate\Http\Request;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class LangController extends BaseController
 {
@@ -23,10 +24,10 @@ class LangController extends BaseController
             ->appends(request()->query());
 
         if($langs->isempty()) {
-            return $this->sendError('There is no languages based on your filter');
+            return $this->sendError('There is no languages based on your filter.');
         }
 
-        return $this->sendResponse($langs, 'All languages retrieved.');
+        return $this->sendResponse(LangResource::collection($langs), 'All languages retrieved.');
     }
 
     /**
@@ -38,13 +39,15 @@ class LangController extends BaseController
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required',
-            'code' => 'required',
-            'currency_id' => 'required'
+            'name' => 'required|string|max:255',
+            'iso_code' => 'required|string|max:2',
+            'langage_locale' => 'required|string|max:5',
+            'date_format_lite' => 'required|',
+            'date_format_full' => 'required|'
         ]);
 
         if ($validator->fails()) {
-            return $this->sendError('Incorrect languages or missing parameters', $validator->errors());
+            return $this->sendError('Incorrect language or missing parameters.', $validator->errors());
         }
 
         $input = $request->all();
@@ -65,7 +68,7 @@ class LangController extends BaseController
         $lang = Lang::find($id);
 
         if (is_null($lang)) {
-            return $this->sendError('Language not found');
+            return $this->sendError('The language does not exist.');
         }
 
         return $this->sendResponse(new LangResource($lang), 'Language retrieved.');
@@ -84,20 +87,20 @@ class LangController extends BaseController
         $lang = Lang::find($id);
 
         if (is_null($lang)) {
-            return $this->sendError('Language not found');
-        }
-
-        $validator = Validator::make($request->all(), [
-            'name' => 'required',
-            'code' => 'required',
-            'currency_id' => 'required'
-        ]);
-
-        if ($validator->fails()) {
-            return $this->sendError('Incorrect languages or missing parameters', $validator->errors());
+            return $this->sendError('The language does not exist.');
         }
 
         $input = $request->all();
+
+        $validator = Validator::make($input, [
+            'name' => 'required',
+            'code' => 'required',
+            'currency_id' => 'required|integer'
+        ]);
+
+        if ($validator->fails()) {
+            return $this->sendError('Incorrect language or missing parameters.', $validator->errors());
+        }
 
         $lang->update($input);
 
@@ -116,12 +119,11 @@ class LangController extends BaseController
         $lang = Lang::find($id);
 
         if (is_null($lang)) {
-            return $this->sendError('Language not found.');
+            return $this->sendError('The language does not exist.');
         }
 
         $lang->delete();
 
-        return $this->sendResponse($lang, 'Language deleted successfully.');
-
+        return $this->sendResponse([], 'Language deleted.');
     }
 }

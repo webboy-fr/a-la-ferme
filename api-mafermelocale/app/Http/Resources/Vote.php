@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class LangResource extends JsonResource
+class Vote extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -16,13 +16,11 @@ class LangResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'name' => $this->name,
-            'iso_code' => $this->iso_code,
-            'langage_local' => $this->langage_local,
-            'date_format_lite' => $this->date_format_lite,
-            'date_format_full' => $this->date_format_full,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'vote' => $this->vote,
+            'user_id' => $this->user_id,
+            'farm_id' => $this->farm_id,
+            'created_at' => $this->created_at->format('d/m/Y'),
+            'updated_at' => $this->updated_at->format('d/m/Y'),
         ];
     }
 }

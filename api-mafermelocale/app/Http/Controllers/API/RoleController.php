@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Role as RoleRessource;
 use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -27,6 +28,7 @@ class RoleController extends BaseController
         }
 
         return $this->sendResponse($roles, 'All roles retrieved.');
+        return $this->sendResponse(RoleRessource::collection($roles), 'All roles retrieved.');
     }
 
     /**
@@ -37,15 +39,17 @@ class RoleController extends BaseController
      */
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required'
+        $input = $request->all();
+
+        $validator = Validator::make($input, [
+            'name' => 'required|string|max:255',
+            'lang_id' => 'required|integer',
         ]);
 
         if ($validator->fails()) {
-            return $this->sendError('Incorrect role or missing parameters', $validator->errors());
+            return $this->sendError('Incorrect role or missing parameters.', $validator->errors());
         }
 
-        $input = $request->all();
         $role = Role::create($input);
 
         return $this->sendResponse($role, 'Role created successfully.', 201);
@@ -62,10 +66,10 @@ class RoleController extends BaseController
         $role = Role::find($id);
 
         if (is_null($role)) {
-            return $this->sendError('Role not found');
+            return $this->sendError('The role does not exist.');
         }
 
-        return $this->sendResponse($role, 'Role retrieved.');
+        return $this->sendResponse(new RoleRessource($role), 'Role retrieved.');
     }
 
     /**
@@ -77,25 +81,27 @@ class RoleController extends BaseController
      */
     public function update(Request $request, $id)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required'
-        ]);
-
-        if ($validator->fails()) {
-            return $this->sendError('Incorrect role or missing parameters', $validator->errors());  
-        }
-
         $role = Role::find($id); // find the role
 
         // if the role is not found
         if (is_null($role)) {
-            return $this->sendError('Role not found'); // return error message that role is not found 
+            return $this->sendError('The role does not exist.'); // return error message that role is not found 
         }
 
         $input = $request->all(); // get all the input from the request
+
+        $validator = Validator::make($input, [
+            'name' => 'required|string|max:255',
+            'lang_id' => 'required|integer',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->sendError('Incorrect role or missing parameters.', $validator->errors());  
+        }
+
         $role->update($input); // update the role with the input
 
-        return $this->sendResponse($role, 'Role updated successfully.'); // return success message that role is updated
+        return $this->sendResponse($role, 'Role updated successfully.');
     }
 
     /**
@@ -109,11 +115,11 @@ class RoleController extends BaseController
         $role = Role::find($id); // find the role
 
         if (is_null($role)) {
-            return $this->sendError('Role not found'); // return error message that role is not found
+            return $this->sendError('The role does not exist.'); // return error message that role is not found
         }
 
         $role->delete(); // delete the role
 
-        return $this->sendResponse($role, 'Role deleted successfully.'); // return success message that role is deleted
+        return $this->sendResponse([], 'Role deleted.');
     }
 }
