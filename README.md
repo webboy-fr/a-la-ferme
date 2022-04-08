@@ -36,7 +36,11 @@ Go to the project directory (API)
 ```
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 Install dependencies (API)
+=======
+Install dependencies and Start the server
+>>>>>>> b825f8337f2b76a33af70c1b48c1c1563fc54746
 =======
 Install dependencies and Start the server
 >>>>>>> b825f8337f2b76a33af70c1b48c1c1563fc54746
