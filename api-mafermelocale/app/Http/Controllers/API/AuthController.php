@@ -18,9 +18,8 @@ class AuthController extends BaseController
         if (Auth::guard('user')->attempt(['email' => $request->email, 'password' => $request->password])) {
             $authUser = Auth::user();
             $success['token'] =  $authUser->createToken('MaFermeLocale')->plainTextToken;
-            $success['name'] =  $authUser->name;
 
-            return $this->sendResponse($success, 'User signed in');
+            return $this->sendResponse($user, 'User signed in');
         } else {
             return $this->sendError('Unauthorised.', ['error' => 'Unauthorised']);
         }
@@ -121,7 +120,6 @@ class AuthController extends BaseController
     public function signoutUser(Request $request)
     {
         $request->user()->currentAccessToken()->delete();
-        $request->user()->signout();
         
         return $this->sendResponse(null, 'Signed out.');
     }

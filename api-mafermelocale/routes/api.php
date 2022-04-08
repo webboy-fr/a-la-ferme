@@ -31,6 +31,7 @@ Route::post('logoutadmin', [AuthController::class, 'signoutAdmin']);
 
 Route::get('farms', [FarmController::class, 'index']);
 
+Route::get('farms/{longitude}/{latitude}/{radius}', [FarmController::class, 'getFarmsByRadius']); // get all farms within a radius of a point (longitude, latitude)
 
 //Route::get('users', [UserController::class, 'index']);
 
@@ -50,7 +51,7 @@ Route::middleware(['auth:sanctum_user'])->group(function () {
         'users' => UserController::class,
         'addresses' => AddressController::class,
         'categories' => CategoryController::class,
-        'farms' => FarmController::class,
+        //'farms' => FarmController::class,
         'votes' => VoteController::class,
     ]);
 
@@ -63,7 +64,7 @@ Route::middleware(['auth:sanctum_admin'])->group(function () {
         'categories' => CategoryController::class,
         'countries' => CountryController::class,
         'currencies' => CurrencyController::class,
-        'farms' => FarmController::class,
+        //'farms' => FarmController::class,
         'langs' => LangController::class,
         'products' => ProductController::class,
         'roles' => RoleController::class,

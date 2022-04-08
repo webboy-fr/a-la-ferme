@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Resources\FarmCollection;
+use App\Models\Address;
 use App\Models\Farm;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -18,6 +19,7 @@ class FarmController extends BaseController
     public function index()
     {
         $farms = QueryBuilder::for(Farm::class)
+            ->allowedIncludes(['address', 'farm_detail'])
             ->allowedFilters('name', 'address.postcode', 'address.city')
             ->allowedSorts('name', 'address.postcode', 'address.city')
             ->paginate(20)
@@ -27,7 +29,7 @@ class FarmController extends BaseController
             return $this->sendError('There is no farms based on your filters');
         }
 
-        return $this->sendResponse(FarmCollection::collection($farms), 'All farms retrieved.');
+        return $this->sendResponse($farms, 'All farms retrieved.');
     }
 
     /**
@@ -123,5 +125,38 @@ class FarmController extends BaseController
         $farm->delete();
 
         return $this->sendResponse($farm, 'Farm deleted successfully.');
+    }
+
+    /**
+     * Get all farms within a given radius.
+     * 
+     * @param  double $longitude
+     * @param  double $latitude
+     * @param  int $radius
+     * 
+     * @return \Illuminate\Http\Response
+     * 
+     */
+    public function getFarmsByRadius($longitude, $latitude, $radius)
+    {
+        if(empty($longitude) || empty($latitude) || empty($radius) || !is_numeric($longitude) || !is_numeric($latitude) || !is_numeric($radius)) {
+            return $this->sendError('The given parameters are not valid.');
+        }
+
+        $farms = Address::selectRaw('*, ( 6371 * acos( cos( radians(?) ) * cos( radians( lat ) ) * cos( radians( lon ) - radians(?) ) + sin( radians(?) ) * sin( radians( lat ) ) ) ) AS distance', [$latitude, $longitude, $latitude])
+            ->having('distance', '<', $radius)
+            ->orderBy('distance')
+            ->get();
+
+        $farms = QueryBuilder::for(Farm::with('farm_detail')->whereIn('address_id', $farms->pluck('id'))) // Get farms with the same address id as the address with the given radius
+            ->allowedFilters('name') // Filter by name, postcode and city
+            ->allowedSorts('name') // Sort by name, postcode and city
+            ->paginate(20); // Paginate 20 results
+
+        if($farms->isempty()) {
+            return $this->sendError('There is no farms based on your filters');
+        }
+
+        return $this->sendResponse($farms, 'All farms retrieved.');
     }
 }

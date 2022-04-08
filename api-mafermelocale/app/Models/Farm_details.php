@@ -30,6 +30,6 @@ class Farm_details extends Model
 
     public function farm()
     {
-        return $this->belongsTo(Farm::class);
+        return $this->belongsTo(Farm::class, null, 'farm_details_id');
     }
 }

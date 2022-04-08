@@ -1,0 +1,28 @@
+/* VENDOR - Default fall-backs and external files.
+========================================================================== */
+
+// @import 'vendor/_normalize.scss';
+
+/* ABSTRACTS - Base Variable file along with starting point Mixins and Placeholders.
+========================================================================== */
+
+@import 'abstracts/_mixins.scss';
+@import 'abstracts/_placeholders.scss';
+@import 'abstracts/_variables.scss';
+
+
+/* COMPONENTS - Re-usable site elements (like buttons, carousel, slider).
+========================================================================== */
+
+// @import 'components/_buttons.scss';
+
+/* CORE - Re-usable site elements (like buttons, carousel, slider).
+========================================================================== */
+
+@import 'core/_reset.scss';
+@import 'core/_typography.scss';
+
+/* LAYOUT - Layout files.
+========================================================================== */
+
+@import 'layout/_navigation.scss';

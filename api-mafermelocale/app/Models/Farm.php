@@ -27,12 +27,12 @@ class Farm extends Model
 
     public function farm_detail()
     {
-        return $this->hasOne(Farm_details::class);
+        return $this->hasOne(Farm_details::class, 'id', 'farm_details_id');
     }
 
     public function address()
     {
-        return $this->hasOne(Address::class);
+        return $this->hasOne(Address::class, 'id', 'address_id');
     }
 
     public function user()

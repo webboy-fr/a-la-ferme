@@ -1,0 +1,36 @@
+@use './variables.scss';
+
+@mixin respond-to($breakpoint) {
+
+    // If the key exists in the map
+    @if map-has-key($breakpoints, $breakpoint) {
+
+        // Prints a media query based on the value
+        @media #{inspect(map-get($breakpoints, $breakpoint))} {
+            @content;
+        }
+    }
+
+    // If the key doesn't exist in the map
+    @else {
+        @warn "Unfortunately, no value could be retrieved from `#{$breakpoint}`. "
+        +"Available breakpoints are: #{map-keys($breakpoints)}.";
+    }
+}
+
+/* 
+    Creating the transition mixins to define the transition if we need some.
+
+    @param $what - The transition to be defined.
+    @param $time - The time of the transition.
+    @param $how - The type of transition.
+
+    Example: @include transition(all,2s,ease-out); 
+*/
+@mixin transition($what: all, $time: 0.2s, $how: ease-in-out) {
+    -webkit-transition: $what $time $how;
+    -moz-transition: $what $time $how;
+    -ms-transition: $what $time $how;
+    -o-transition: $what $time $how;
+    transition: $what $time $how;
+}
