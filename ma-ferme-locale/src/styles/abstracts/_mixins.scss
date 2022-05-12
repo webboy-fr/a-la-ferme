@@ -1,4 +1,5 @@
 @use './variables.scss';
+@use 'sass:math';
 
 @mixin respond-to($breakpoint) {
 
@@ -33,4 +34,47 @@
     -ms-transition: $what $time $how;
     -o-transition: $what $time $how;
     transition: $what $time $how;
+}
+
+@mixin transform($transforms) {
+	-webkit-transform: $transforms;
+	-moz-transform: $transforms;
+	-ms-transform: $transforms;
+	transform: $transforms;
+}
+
+/*
+    Creating a mxixin to create rounded hexagon with clip-path.
+
+    @param $main-radius - The radius of the main hexagon.
+    @param $rounding-radius - The radius of the rounding.
+
+*/
+@mixin rounded-hex($main-radius: 30%, $rounding-radius: 10%, $rotated: false, $precision: 20) {
+    $n: 6;
+    $central-angle: 360deg/$n;
+    $angle: ($n - 2)*180deg/$n;
+    $max-var-angle: 2*(90deg - $angle/2);
+    $precision: 6;
+    $unit-var-angle: $max-var-angle/$precision;
+
+    $r-diff: $main-radius + $rounding-radius;
+
+    $points: ();
+
+    @for $i from 0 to $n {
+        $vertex-angle: $i*$central-angle + if($rotated, -90deg, 0deg);
+        $vertex-x: 50% + $r-diff*math.cos($vertex-angle);
+        $vertex-y: 50% + $r-diff*math.sin($vertex-angle);
+
+        @for $j from 0 through $precision {
+            $curr-angle: $vertex-angle + ($j - .5*$precision)*$unit-var-angle;
+            $x: $vertex-x + $rounding-radius*math.cos($curr-angle);
+            $y: $vertex-y + $rounding-radius*math.sin($curr-angle);
+
+            $points: $points, $x $y;
+        }
+    }
+
+    clip-path: polygon($points);
 }

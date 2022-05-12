@@ -1,6 +1,6 @@
 import React from 'react';
-import axios from 'axios';
 import { Link } from 'react-router-dom';
+import { ApiClient } from '../../services/ApiClient';
 
 class Farm extends React.Component {
 
@@ -17,7 +17,7 @@ class Farm extends React.Component {
     }
 
     componentDidMount() {
-        axios.get(`${process.env.REACT_APP_API_URL}/farms`, {
+        ApiClient.get('/api/farms', {
             headers: {
                 Accept: 'application/json'
             }
@@ -41,7 +41,6 @@ class Farm extends React.Component {
 
         return (
             <div>
-                <h1>Farms</h1>
                 <ul>
                     {//create a for loop on the farms state
                         this.state.farms.map(farm =>
