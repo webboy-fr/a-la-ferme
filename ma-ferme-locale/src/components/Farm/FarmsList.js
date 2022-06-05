@@ -4,37 +4,11 @@ import { ApiClient } from '../../services/ApiClient';
 import toast, { Toaster } from 'react-hot-toast';
 import { Autocomplete, Button, Divider, Grid, Slider, TextField, Typography } from '@mui/material';
 import { Box } from '@mui/system';
-import { ThemeProvider } from '@emotion/react';
-import farmTheme from '../../FarmTheme';
-import AutocompleteBAN from '../../services/AutocompleteBAN';
+
+import AutocompleteBAN from './Positions/AutocompleteBAN';
+import GeoLoc from './Positions/GeoLoc';
 
 class FarmsList extends React.Component {
-
-    getLocation() {
-        var longitude;
-        var latitude;
-
-        function success(position, setLocation) {
-            setLocation(position.coords.longitude, position.coords.latitude);
-        }
-
-        //if the longitude and latitude are set, then we can use them to get the location
-        if (longitude && latitude) {
-            this.setLocation(longitude, latitude);
-        }
-
-        function error() {
-            toast.error('Unable to retrieve your location');
-        }
-
-        if (!navigator.geolocation) {
-            toast.error('Geolocation is not supported by your browser');
-        } else {
-            toast.success('Locating…', { autoClose: false });
-            navigator.geolocation.getCurrentPosition(success, error);
-        }
-
-    }
 
     slugify(string) {
         const a = 'àáâäæãåāăąçćčđďèéêëēėęěğǵḧîïíīįìıİłḿñńǹňôöòóœøōõőṕŕřßśšşșťțûüùúūǘůűųẃẍÿýžźż·/_,:;'
@@ -58,11 +32,23 @@ class FarmsList extends React.Component {
             farms: [],
             longitude: '',
             latitude: '',
-            radius: 5,
+            radius: 10,
         };
 
         this.setLocation = this.setLocation.bind(this);
     }
+
+    setFarms(farms) {
+        this.setState({ farms });
+    }
+
+    setLocation(longitude, latitude) {
+        this.setState({
+            longitude: longitude,
+            latitude: latitude
+        });
+    }
+
 
     getFarmByRadius() {
 
@@ -72,28 +58,12 @@ class FarmsList extends React.Component {
             }
         })
             .then(response => {
-                if(response.status === 404) {
-                    this.setState({
-                        farms: []
-                    });
-                } else {
-
-                this.setState({
-                    farms: response.data.data.data
-                });
-            }
-                //console.log(this.state.farms);    
+                this.setFarms(response.data.data.data);   
             })
             .catch(error =>
-                console.error(error)
+                console.error(error),
+                this.setFarms([])
             );
-    }
-
-    setLocation(longitude, latitude) {
-        this.setState({
-            longitude: longitude,
-            latitude: latitude
-        });
     }
 
     componentDidMount() {
@@ -138,13 +108,14 @@ class FarmsList extends React.Component {
                                     <AutocompleteBAN maxResults={5} setLocation={this.setLocation} />
                                 </Grid>
                                 <Grid item xs={6} >
-                                    <Button onClick={() => this.getLocation()} sx={{ borderRadius: '20px' }} color="primary" variant="contained" fullWidth>Utiliser votre position</Button>
+                                    <GeoLoc setLocation={this.setLocation} />
                                 </Grid>
                             </Grid>
 
                             <Slider
-                                aria-label="Small steps"
-                                defaultValue={5}
+                                aria-label="Radius"
+                                onChange={(event, newValue) => this.setState({ radius: newValue })}
+                                defaultValue={10}
                                 step={5}
                                 marks
                                 min={5}

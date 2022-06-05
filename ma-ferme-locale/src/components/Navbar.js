@@ -6,8 +6,8 @@ import '../styles/global.scss';
 import user from '../components/User/User';
 import { Breakpoint } from 'react-socks';
 import Mobile from './Navbar/Mobile';
+import { ApiClient } from '../services/ApiClient';
 
-const settingsCo = ['Profil', 'Se déconnecter'];
 const settings = ['S\'inscrire', 'Se connecter'];
 
 class Navbar extends React.Component {
@@ -37,11 +37,27 @@ class Navbar extends React.Component {
         this.setState({ anchorElUser: null });
     };
 
+    logout = (e) => {
+        e.preventDefault();
+
+        ApiClient.post('/logout', {})
+            .then(() => {
+                console.log('logout');
+            }).catch((err) => {
+                console.log(err);
+            }).finally(() => {
+                user.logout();
+                this.props.history.push('/login');
+            });
+
+        this.handleCloseUserMenu();
+    }
+
     render() {
 
         return (
             <>
-                <Breakpoint medium up style={{position: "absolute"}}>
+                <Breakpoint sm up style={{ position: "absolute" }}>
                     <AppBar position="fixed" sx={{ color: 'white', boxShadow: 'none', background: 'linear-gradient(180deg, rgba(0, 0, 0, 0.27) 0%, rgba(255, 255, 255, 0) 100%)' }} >
                         <Container>
                             <Toolbar disableGutters>
@@ -50,13 +66,13 @@ class Navbar extends React.Component {
                                         variant="h6"
                                         noWrap
                                         component="div"
-                                        sx={{ mr: 2, display: { xs: 'none', md: 'flex' } }}
+                                        sx={{ mr: 2, display: 'flex' }}
                                     >
                                         MA FERME LOCALE
                                     </Typography>
                                 </Link>
 
-                                <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, justifyContent: 'flex-end', mr: 20 }}>
+                                <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'flex-end', mr: 20 }}>
                                     <Button href='/' onClick={this.handleCloseNavMenu} sx={{ my: 2, color: 'inherit', display: 'block' }}>
                                         Accueil
                                     </Button>
@@ -92,11 +108,14 @@ class Navbar extends React.Component {
                                         onClose={this.handleCloseUserMenu}
                                     >
                                         {user.isLoggedIn() ?
-                                            <>
-                                                <MenuItem onClick={this.handleCloseUserMenu}>Profile</MenuItem>
+                                            <div>
+                                                <Link href="/dashboard" underline="none" color="inherit">
+                                                <MenuItem
+                                                    onClick={this.handleCloseUserMenu}>Profile</MenuItem>
+                                                </Link>
                                                 <MenuItem onClick={this.handleCloseUserMenu}>User Management</MenuItem>
-                                                <MenuItem onClick={this.handleCloseUserMenu}>Logout</MenuItem>
-                                            </>
+                                                <MenuItem onClick={this.logout}>Logout</MenuItem>
+                                            </div>
                                             :
                                             settings.map((setting) => (
                                                 <MenuItem key={setting} onClick={this.handleCloseUserMenu}>
@@ -111,7 +130,7 @@ class Navbar extends React.Component {
                         </Container>
                     </AppBar>
                 </Breakpoint>
-                <Breakpoint medium down>
+                <Breakpoint xs only>
                     <Mobile />
                 </Breakpoint>
             </>

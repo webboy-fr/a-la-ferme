@@ -10,13 +10,15 @@ const farmTheme = createTheme({
         secondary: {
             main: '#407A64',
         },
+        thirdary: {
+            main: '#FFF',
+        },
         black: {
             main: '#000000',
             contrastText: '#ffffff',
         },
         white: {
-            main: '#ffffff',
-            contrastText: '#000000',
+            main: '#ffffff'
         }
     },
     typography: {
@@ -30,13 +32,19 @@ const farmTheme = createTheme({
         fontFamily: '"Karla", "Helvetica", "Arial", sans-serif',
         h3: {
             fontFamily: '"Rubik", "Helvetica", "Arial", sans-serif',
+            fontSize: 'clamp(1.4rem, 2vw + 0.5rem, 1.7rem)',
         },
         h4: {
             fontFamily: '"Rubik", "Helvetica", "Arial", sans-serif',
+            fontSize: 'clamp(1.2rem, 2vw + 0.5rem, 1.4rem)',
         },
         h5: {
             fontFamily: '"Rubik", "Helvetica", "Arial", sans-serif',
-            fontSize: '1.2rem',
+            fontSize: 'clamp(1rem, 2vw + 0.5rem, 1.2rem)',
+        },
+        body1: {
+            fontFamily: '"Karla", "Helvetica", "Arial", sans-serif',
+            fontSize: 'clamp(0.8rem, 2vw + 0.5rem, 1rem)',
         },
     },
 });

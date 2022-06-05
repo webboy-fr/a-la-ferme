@@ -71,7 +71,9 @@ export default function AutocompleteBAN({ maxResults, setLocation }) {
             onChange={(event, newValue) => {
                 setOptions(newValue ? [newValue, ...options] : options);
                 setValue(newValue);
-                setLocation(newValue.geometry.coordinates[0], newValue.geometry.coordinates[1]);
+                // Next line is needed to avoid an error when we click on the cross to delete the value
+                // It is because if we click on the cross, the value is set to null and we can't read the new value
+                newValue ? setLocation(newValue.geometry.coordinates[0], newValue.geometry.coordinates[1]) : setLocation(0, 0);
             }}
             onInputChange={(event, newInputValue) => {
                 setInputValue(newInputValue);

@@ -35,7 +35,8 @@ Route::get('farms/{longitude}/{latitude}/{radius}', [FarmController::class, 'get
 /**
  * Only authenticated users can call the route named here
  */
-Route::middleware(['auth:sanctum_user'])->group(function () {   
+Route::middleware(['auth:sanctum_user'])->group(function () {
+
     Route::controller(UserController::class)->group(function () {
 
         Route::get('/users/{id}/farms', 'showFarm');
