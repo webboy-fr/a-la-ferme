@@ -1,12 +1,11 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { ApiClient } from '../../services/ApiClient';
-import toast, { Toaster } from 'react-hot-toast';
-import { Autocomplete, Button, Divider, Grid, Slider, TextField, Typography } from '@mui/material';
+import { Button, Divider, Grid, Slider, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 
 import AutocompleteBAN from './Positions/AutocompleteBAN';
 import GeoLoc from './Positions/GeoLoc';
+import Farm from './Farm';
 
 class FarmsList extends React.Component {
 
@@ -58,7 +57,7 @@ class FarmsList extends React.Component {
             }
         })
             .then(response => {
-                this.setFarms(response.data.data.data);   
+                this.setFarms(response.data.data.data);
             })
             .catch(error =>
                 console.error(error),
@@ -76,7 +75,7 @@ class FarmsList extends React.Component {
                 this.setState({
                     farms: response.data.data
                 });
-                //console.log(this.state.farms);
+                console.log(this.state.farms);
             })
             .catch(error =>
                 console.error(error)
@@ -99,15 +98,15 @@ class FarmsList extends React.Component {
                             <img src='./img/fresh_farm_products.png' />
                         </Grid>
                         <Grid sx={{ display: 'grid', alignContent: 'space-evenly' }} item xs={12} md={6} padding="0 5%">
-                            <Typography color='black' variant="h4" align='center'>
+                            <Typography color='common.black' variant="h4" align='center'>
                                 Filtrer votre recherche :
                             </Typography>
 
                             <Grid container spacing={2}>
-                                <Grid item xs={6} >
+                                <Grid item xs={12} sm={6}>
                                     <AutocompleteBAN maxResults={5} setLocation={this.setLocation} />
                                 </Grid>
-                                <Grid item xs={6} >
+                                <Grid item xs={12} sm={6}>
                                     <GeoLoc setLocation={this.setLocation} />
                                 </Grid>
                             </Grid>
@@ -129,21 +128,29 @@ class FarmsList extends React.Component {
                         </Grid>
                     </Grid>
 
-                    <Divider sx={{ width: '50%', margin: '0 auto', border: '1px solid' }} variant='fullWidth' textAlign='center' />
+                    <Divider sx={{ width: '50%', margin: '0 auto', border: '1px solid', background: 'black' }} variant='fullWidth' textAlign='center' />
                 </Box>
 
-                <ul>
-                    {
-                        this.state.farms.length === 0 ?
-                            <p>No farms found</p>
-                            :
+                <Typography variant="h4" align='center'>
+                    Il y a <Typography color="primary" variant="h4" component="span">{this.state.farms.length}</Typography> ferme.s autour de vous
+                </Typography>
+
+                {
+                    this.state.farms.length === 0 ?
+                        <Typography variant="h4" align='center'>
+                            Aucune ferme trouvée
+                        </Typography>
+                        :
+                        <Grid container justifyContent="space-evenly">
+                            {
                             this.state.farms.map(farm =>
-                                <li key={farm.id}>
-                                    <Link to={`/farms/${this.slugify(farm.name)}`}>{farm.name}</Link>
-                                </li>
+                            <Grid item container xs={12} sm={5} data-farm-id={farm.id}>
+                                <Farm name={farm.name} short_description={farm.short_description} farm_image={farm.farm_image} />
+                            </Grid>
                             )
-                    }
-                </ul>
+                        }
+                        </Grid>
+                }
             </>
         );
     }

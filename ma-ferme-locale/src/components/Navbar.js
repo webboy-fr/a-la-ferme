@@ -40,8 +40,11 @@ class Navbar extends React.Component {
     logout = (e) => {
         e.preventDefault();
 
-        ApiClient.post('/logout', {})
-            .then(() => {
+        ApiClient.post('/logout', {
+            headers: {
+                Accept: 'application/json',
+            }
+        }).then(() => {
                 console.log('logout');
             }).catch((err) => {
                 console.log(err);
@@ -110,18 +113,23 @@ class Navbar extends React.Component {
                                         {user.isLoggedIn() ?
                                             <div>
                                                 <Link href="/dashboard" underline="none" color="inherit">
-                                                <MenuItem
-                                                    onClick={this.handleCloseUserMenu}>Profile</MenuItem>
+                                                    <MenuItem
+                                                        onClick={this.handleCloseUserMenu}>Profile</MenuItem>
                                                 </Link>
                                                 <MenuItem onClick={this.handleCloseUserMenu}>User Management</MenuItem>
                                                 <MenuItem onClick={this.logout}>Logout</MenuItem>
                                             </div>
                                             :
-                                            settings.map((setting) => (
-                                                <MenuItem key={setting} onClick={this.handleCloseUserMenu}>
-                                                    <Typography textAlign="center">{setting}</Typography>
-                                                </MenuItem>
-                                            ))}
+                                            <>
+                                                <Link href="/login" underline="none" color="inherit">
+                                                    <MenuItem
+                                                        onClick={this.handleCloseUserMenu}>Se connecter</MenuItem>
+                                                </Link>
+                                                <Link href="/register" underline="none" color="inherit">
+                                                    <MenuItem onClick={this.handleCloseUserMenu}>S'inscrire</MenuItem>
+                                                </Link>
+                                            </>
+                                        }
 
                                     </Menu>
                                 </Box>

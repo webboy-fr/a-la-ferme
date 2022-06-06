@@ -7,7 +7,14 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\FarmController;
 use App\Http\Controllers\API\UserController;
-use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\API\CategoryController;
+use App\Http\Controllers\API\ProductController;
+use App\Http\Controllers\API\RoleController;
+use App\Http\Controllers\API\VoteController;
+use App\Http\Controllers\API\CountryController;
+use App\Http\Controllers\API\CurrencyController;
+use App\Http\Controllers\API\LangController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -25,9 +32,6 @@ Route::post('register', [AuthController::class, 'signup']);
 
 Route::post('loginadmin', [AuthController::class, 'signinAdmin']);
 Route::post('registeradmin', [AuthController::class, 'signupAdmin']);
-
-Route::post('logout', [AuthController::class, 'signoutUser']);
-Route::post('logoutadmin', [AuthController::class, 'signoutAdmin']);
 
 Route::get('farms', [FarmController::class, 'index']);
 Route::get('farms/{longitude}/{latitude}/{radius}', [FarmController::class, 'getFarmsByRadius']);
@@ -49,6 +53,8 @@ Route::middleware(['auth:sanctum_user'])->group(function () {
         'categories' => CategoryController::class,
         'votes' => VoteController::class,
     ]);
+
+    Route::post('logout', [AuthController::class, 'signoutUser']); // Logout user
 });
 
 Route::middleware(['auth:sanctum_admin'])->group(function () {
@@ -63,6 +69,9 @@ Route::middleware(['auth:sanctum_admin'])->group(function () {
         'roles' => RoleController::class,
         'users' => UserController::class,
         'votes' => VoteController::class,
+        'roles' => RoleController::class,
     ]);
+
+    Route::post('logoutadmin', [AuthController::class, 'signoutAdmin']); // Logout admin
 
 });

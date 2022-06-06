@@ -1,10 +1,10 @@
 import React from 'react';
 import { ApiClient } from '../../../services/ApiClient';
 import { getPhotos } from '../../../services/Pexels';
-import { farmTheme } from '../../../FarmTheme';
 import user from '../User';
 import { Typography, TextField, Button, FormControlLabel, Link, Checkbox, Box, Grid } from '@mui/material';
 import toast from 'react-hot-toast';
+import { useNavigate } from "react-router-dom";
 
 export default class LoginForm extends React.Component {
 
@@ -27,7 +27,8 @@ export default class LoginForm extends React.Component {
      */
     authenticatedCallback = () => {
         let {from} = this.props.location || {from: {pathname: '/dashboard'}}
-        this.props.history.push(from)
+        let navigate = useNavigate();
+        navigate(from);
     }
 
     componentDidMount() {

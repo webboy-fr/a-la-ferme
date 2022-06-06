@@ -1,11 +1,11 @@
 import React from 'react';
-import { Box, Grid, Typography } from '@mui/material';
+import { Box, Grid, Link, Typography } from '@mui/material';
 
 const Footer = () => {
 
     return (
         <footer className="footer" >
-            <Box className="footer-box" sx={{ background: 'black', textAlign: {xs: 'center'}  }}>
+            <Box className="footer-box" sx={{ background: 'black', textAlign: { xs: 'center' } }}>
                 <Grid container spacing={2} justifyContent="center" alignItems="flex-start" marginTop={0} paddingTop="4vh">
                     <Grid item xs={6} sm={3}>
                         <Typography variant="h1" color="#fff" gutterBottom>
@@ -22,9 +22,11 @@ const Footer = () => {
                         <Typography variant="h6" color="#fff" sx={{ fontWeight: 'bold' }} gutterBottom>
                             Explorer
                         </Typography>
-                        <Typography variant="body1" color="#858585" gutterBottom>
-                            Accueil
-                        </Typography>
+                        <Link href="/" color="inherit">
+                            <Typography variant="body1" color="#858585" gutterBottom>
+                                Accueil
+                            </Typography>
+                        </Link>
                         <Typography variant="body1" color="#858585" gutterBottom>
                             Les Fermes
                         </Typography>

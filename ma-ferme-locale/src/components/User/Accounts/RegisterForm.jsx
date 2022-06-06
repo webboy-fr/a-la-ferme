@@ -21,6 +21,7 @@ export default class LoginForm extends React.Component {
     }
 
     componentDidMount() {
+        // Get the background image from Pexels API
         getPhotos(158179).then(res => {
             this.setState({ backgroundImage: res.src.large2x });
         });
@@ -55,7 +56,8 @@ export default class LoginForm extends React.Component {
     render() {
 
         return (
-            <Box className='login-container' sx={{ backgroundImage: 'url(./img/sheep_in_a_field_eating_grass.webp)', display: 'grid', alignItems: 'center', height: "100vh" }}>
+            <Box className='login-container' display="grid" alignItems="center" height="100vh">
+                <img src={this.state.backgroundImage} alt="Mouton dans la prairie"/>
                 <Grid container direction='row' spacing={0} minHeight="75%" maxWidth="lg" margin="0 auto" align='center' justifyContent="center">
                     <Grid item container direction='column' display="flex" justifyContent="center" xs={12} sm={12} md={6} sx={{ background: 'white', padding: { sm: '0 10%' } }}>
                         <Box component="form" onSubmit={this.handleSubmit} sx={{ mt: 1 }}>

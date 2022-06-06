@@ -28,6 +28,7 @@ const farmTheme = createTheme({
         },
         h2: {
             fontFamily: '"Rubik", "Helvetica", "Arial", sans-serif',
+            fontSize: 'clamp(1.6rem, 2vw + 0.5rem, 2rem)',
         },
         fontFamily: '"Karla", "Helvetica", "Arial", sans-serif',
         h3: {
@@ -46,6 +47,10 @@ const farmTheme = createTheme({
             fontFamily: '"Karla", "Helvetica", "Arial", sans-serif',
             fontSize: 'clamp(0.8rem, 2vw + 0.5rem, 1rem)',
         },
+        404: {
+            fontFamily: '"Rubik", "Helvetica", "Arial", sans-serif',
+            fontSize: 'clamp(10rem, 8vw - 2rem, 10rem)',
+        }
     },
 });
 

@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Hash;
 class AuthController extends BaseController
 {
     /**
-     * Sign in method for admin
+     * Sign in method for users
      * 
      * @return \Illuminate\Http\Response
      */
@@ -22,7 +22,7 @@ class AuthController extends BaseController
         if (!empty($request->email) && !empty($request->password)) {
 
             if (Auth::guard('user')->attempt(['email' => $request->email, 'password' => $request->password])) {
-                $authUser = Auth::user();
+                $authUser = Auth::guard('user')->user();
                 $success['token'] = $authUser->createToken('MaFermeLocale')->plainTextToken;
 
                 // User data
@@ -82,7 +82,11 @@ class AuthController extends BaseController
      */
     public function signoutUser(Request $request)
     {
-        $request->user('sanctum_user')->currentAccessToken()->delete();
+        //get the token id from the header
+        $token = $request->header('Authorization');
+        $token_id = str_replace('Bearer ', '', $token);
+
+        $request->user('sanctum_user')->tokens()->where('id', $token_id )->delete();
         
         return $this->sendResponse([], 'User Signed out.');
     }
@@ -154,7 +158,13 @@ class AuthController extends BaseController
      */
     public function signoutAdmin(Request $request)
     {
-        $request->user('sanctum_admin')->currentAccessToken()->delete();
+        //get the token id from the header
+        $token = $request->header('Authorization');
+        $token_id = str_replace('Bearer ', '', $token);
+
+        $request->user('sanctum_admin')->tokens()->where('id', $token_id )->delete();
+
+        //$request->user('sanctum_admin')->currentAccessToken()->delete();
         
         return $this->sendResponse([], 'Admin signed out.');
     }
