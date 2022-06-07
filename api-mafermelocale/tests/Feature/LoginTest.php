@@ -23,11 +23,10 @@ class LoginTest extends TestCase
             ->assertJson([
                 'success' => false,
                 'data' => [
-                    'error' => 'Bad Request',
+                    'error' => 'Bad Request.',
                     'email' => 'The email field is required.',
                     'password' => 'The password field is required.'
-                ],
-                'message' => 'Bad Request.',
+                ]
             ]);
     }
 
@@ -141,14 +140,10 @@ class LoginTest extends TestCase
      */
     public function testAdminLoginsSuccessfully()
     {
-        Admin::create([
-            'username' => 'Test Login',
-            'email' => 'testlogin@admin.com',
-            'password' => Hash::make('Admin123')
-        ]);
+        $admin = Admin::factory()->create();
 
         $headers = ['Accept' => 'application/json'];
-        $adminTest = ['email' => 'testlogin@admin.com', 'password' => 'Admin123'];
+        $adminTest = ['email' => $admin->email, 'password' => 'password'];
 
         $this->json('POST', 'api/loginadmin', $adminTest, $headers)
             ->assertStatus(200)
@@ -165,6 +160,6 @@ class LoginTest extends TestCase
                 'message'
             ]);
 
-        Admin::where('email', 'testlogin@admin.com')->delete();
+        $admin->delete();
     }
 }

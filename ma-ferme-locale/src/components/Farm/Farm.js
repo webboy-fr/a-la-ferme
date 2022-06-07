@@ -1,6 +1,7 @@
+import { Grid, Typography } from '@mui/material';
 import React from 'react';
-import axios from 'axios';
 import { Link } from 'react-router-dom';
+import { ApiClient } from '../../services/ApiClient';
 
 class Farm extends React.Component {
 
@@ -8,49 +9,25 @@ class Farm extends React.Component {
         super(props);
 
         this.state = {
-            farm: [],
-            setFarm: function (farm) {
-                this.farm = farm;
-            }
+            name: '',
+            short_description: '',
+            farm_image: '',
         };
 
-    }
-
-    componentDidMount() {
-        axios.get(`${process.env.REACT_APP_API_URL}/farms`, {
-            headers: {
-                Accept: 'application/json'
-            }
-        })
-            .then(response => {
-                this.setState({
-                    farms: response.data.data.data
-                });
-                console.log(this.state.farm);
-            })
-            .catch(error => console.error(error));
-    }
-
-    componentWillUnmount() {
-        this.setState({
-            farms: []
-        });
     }
 
     render() {
 
         return (
-            <div>
-                <h1>Farms</h1>
-                <ul>
-                    {//create a for loop on the farms state
-                        this.state.farms.map(farm =>
-                            <li key={farm.id}>
-                                <Link to={`/farms/${this.slugify(farm.name)}`}>{farm.name}</Link>
-                            </li>
-                        )}
-                </ul>
-            </div>
+            <Grid container spacing={2} pt="5%">
+                <Grid item container xs={6}>
+                    <img src={this.props.farm_image} alt={this.props.name} style={{ maxWidth: "100%" }} />
+                </Grid>
+                <Grid item container xs={6}>
+                    <Typography variant="h2">{this.props.name}</Typography>
+                    <Typography variant="body1">{this.props.short_description}</Typography>
+                </Grid>
+            </Grid>
         );
     }
 

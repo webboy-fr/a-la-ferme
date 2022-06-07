@@ -5,9 +5,17 @@ import App from './App';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import reportWebVitals from './reportWebVitals';
 
+import { BreakpointProvider } from 'react-socks';
+import { ThemeProvider } from '@emotion/react';
+import farmTheme from './FarmTheme';
+
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <BreakpointProvider>
+      <ThemeProvider theme={farmTheme}>
+        <App />
+      </ThemeProvider>
+    </BreakpointProvider>
   </React.StrictMode>,
   document.getElementById('root')
 );

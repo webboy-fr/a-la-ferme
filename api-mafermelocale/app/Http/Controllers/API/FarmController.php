@@ -175,6 +175,7 @@ class FarmController extends BaseController
             return $this->sendError('The given parameters are not valid.');
         }
 
+        // 6371 is the radius of the Earth in km
         $farms = Address::selectRaw('*, ( 6371 * acos( cos( radians(?) ) * cos( radians( lat ) ) * cos( radians( lon ) - radians(?) ) + sin( radians(?) ) * sin( radians( lat ) ) ) ) AS distance', [$latitude, $longitude, $latitude])
             ->having('distance', '<', $radius)
             ->orderBy('distance')
