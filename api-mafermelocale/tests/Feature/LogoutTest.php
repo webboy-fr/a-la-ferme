@@ -4,13 +4,14 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use App\Models\Admin;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class LogoutTest extends TestCase
 {
+
+    use RefreshDatabase;
+
      /**
      * A logout user test
      *
@@ -18,21 +19,18 @@ class LogoutTest extends TestCase
      */
     public function testUserIsLoggedOutProperly()
     {
-        $user = User::create([
-            'first_name' => 'Test',
-            'last_name' => 'Login',
-            'email' => 'testlogin@user.com',
-            'password' => Hash::make('User123'),
+        //make a user and log them in
+        $user = User::factory()->create([
             'role_id' => 2,
-            'address_id' => 1
         ]);
-
+        
         $headers = ['Accept' => 'application/json'];
-        $userTest = ['email' => 'testlogin@user.com', 'password' => 'User123'];
+        $userTest = ['email' => $user->email, 'password' =>'password'];
 
-        $this->json('POST', 'api/login', $userTest, $headers)->assertStatus(200);
+        //log the user in and get the token
+        $response = $this->json('POST', 'api/login', $userTest,  $headers)->assertStatus(200);
+        $token = $response->json()['data']['token'];
 
-        $token = $user->generateToken();
         $header = ['Authorization' => "Bearer $token"];
 
         $this->json('POST', 'api/logout', $header)
@@ -43,7 +41,7 @@ class LogoutTest extends TestCase
                 "data" => null
             ]);
 
-        User::where('email', 'testlogin@user.com')->delete();
+        $user->delete();
     }
 
     /**
@@ -53,18 +51,14 @@ class LogoutTest extends TestCase
      */
     public function testAdminIsLoggedOutProperly()
     {
-        $admin = Admin::create([
-            'username' => 'Test Login',
-            'email' => 'testlogin@admin.com',
-            'password' => Hash::make('Admin123')
-        ]);
+        $admin = Admin::factory()->create();
 
         $headers = ['Accept' => 'application/json'];
-        $adminTest = ['email' => 'testlogin@admin.com', 'password' => 'Admin123'];
+        $adminTest = ['email' => $admin->email, 'password' => 'password'];
 
-        $this->json('POST', 'api/loginadmin', $adminTest, $headers)->assertStatus(200);
+        $response = $this->json('POST', 'api/loginadmin', $adminTest, $headers)->assertStatus(200);
+        $token = $response->json()['data']['token'];
 
-        $token = $admin->generateToken();
         $header = ['Authorization' => "Bearer $token"];
 
         $this->json('POST', 'api/logoutadmin', $header)
@@ -75,7 +69,7 @@ class LogoutTest extends TestCase
                 "data" => null
             ]);
 
-        Admin::where('email', 'testlogin@admin.com')->delete();
+        $admin->delete();
     }
 
     /**
@@ -86,23 +80,22 @@ class LogoutTest extends TestCase
     public function testAdminWithNullToken()
     {
         // Simulating login
-        $admin = Admin::create([
-            'username' => 'Test Login',
-            'email' => 'testlogin@admin.com',
-            'password' => Hash::make('Admin123')
-        ]);
+        $admin = Admin::factory()->create();
 
         $headers = ['Accept' => 'application/json'];
-        $adminTest = ['email' => 'testlogin@admin.com', 'password' => 'Admin123'];
+        $adminTest = ['email' => $admin->email, 'password' => 'password'];
 
-        $token = $admin->generateToken();
-        $header = ['Authorization' => "Bearer $token"];
+        $response = $this->json('POST', 'api/loginadmin', $adminTest, $headers)->assertStatus(200); // Simulating login
+        $token = $response->json()['data']['token']; // get the token
 
-        $this->json('POST', 'api/loginadmin', $adminTest, $headers)->assertStatus(200);
+        $header = ['Authorization' => "Bearer $token"]; // Null token
+
+        //$this->json('POST', 'api/loginadmin', $adminTest, $headers)->assertStatus(200);
         $this->json('POST', 'api/logoutadmin', $header)->assertStatus(200);
 
-        $this->json('GET', 'api/roles', [], $headers)->assertStatus(401);
+        // Simulating access of files
+        $this->json('GET', 'api/users', [], ['Accept' => 'application/json'])->assertStatus(404);
 
-        Admin::where('email', 'testlogin@admin.com')->delete();
+        $admin->delete();
     }
 }

@@ -1,50 +1,147 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+
+import { AppBar, Box, Toolbar, Typography, IconButton, Menu, Container, Avatar, Button, Tooltip, MenuItem, Link } from '@mui/material';
 
 import '../styles/global.scss';
+import user from '../components/User/User';
+import { Breakpoint } from 'react-socks';
+import Mobile from './Navbar/Mobile';
+import { ApiClient } from '../services/ApiClient';
+
+const settings = ['S\'inscrire', 'Se connecter'];
 
 class Navbar extends React.Component {
 
     constructor(props) {
         super(props);
+
         this.state = {
-            isExpanded: false
+            anchorElUser: null,
+            anchorElNav: null
         }
+
     }
 
-    /* Ajouter un sous-menu
-    <li>
-        <a href="#!">Services</a>
-        <ul class="nav-dropdown">
-            <li><a href="#!">Web Design</a></li>
-            <li><a href="#!">Web Development</a></li>
-            <li><a href="#!">Graphic Design</a></li>
-        </ul>
-    </li>
-    */
+    handleOpenNavMenu = (event) => {
+        this.setState({ anchorElNav: event.currentTarget });
+    };
+    handleOpenUserMenu = (event) => {
+        this.setState({ anchorElUser: event.currentTarget });
+    };
+
+    handleCloseNavMenu = () => {
+        this.setState({ anchorElNav: null });
+    };
+
+    handleCloseUserMenu = () => {
+        this.setState({ anchorElUser: null });
+    };
+
+    logout = (e) => {
+        e.preventDefault();
+
+        ApiClient.post('/logout', {
+            headers: {
+                Accept: 'application/json',
+            }
+        }).then(() => {
+                console.log('logout');
+            }).catch((err) => {
+                console.log(err);
+            }).finally(() => {
+                user.logout();
+                this.props.history.push('/login');
+            });
+
+        this.handleCloseUserMenu();
+    }
 
     render() {
 
         return (
-            <section class="navigation">
-                <div class="nav-container">
-                    <div class="brand">
-                        <Link to="/">Ma ferme locale</Link>
-                    </div>
-                    <nav>
-                        <div class="nav-mobile">
-                            <a id="nav-toggle" className={this.state.isExpanded ? "active" : ""} onClick={() => this.setState({ isExpanded: !this.state.isExpanded })}><span></span></a>
-                        </div>
-                        <ul class="nav-list " style={this.state.isExpanded ? { display: 'block' } : {}}>
-                            <li><Link to="/">Accueil</Link></li>
-                            <li><Link to="/farms">Les fermes</Link></li>
-                            <li><a href="#!">Le projet</a></li>
-                            <li><a href="#!">Aide</a></li>
-                            <li><a href="/login">Connexion test</a></li>
-                        </ul>
-                    </nav>
-                </div>
-            </section>
+            <>
+                <Breakpoint sm up style={{ position: "absolute" }}>
+                    <AppBar position="fixed" sx={{ color: 'white', boxShadow: 'none', background: 'linear-gradient(180deg, rgba(0, 0, 0, 0.27) 0%, rgba(255, 255, 255, 0) 100%)' }} >
+                        <Container>
+                            <Toolbar disableGutters>
+                                <Link href="/" underline="none" color="inherit">
+                                    <Typography
+                                        variant="h6"
+                                        noWrap
+                                        component="div"
+                                        sx={{ mr: 2, display: 'flex' }}
+                                    >
+                                        MA FERME LOCALE
+                                    </Typography>
+                                </Link>
+
+                                <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'flex-end', mr: 20 }}>
+                                    <Button href='/' onClick={this.handleCloseNavMenu} sx={{ my: 2, color: 'inherit', display: 'block' }}>
+                                        Accueil
+                                    </Button>
+                                    <Button href='/farms' onClick={this.handleCloseNavMenu} sx={{ my: 2, color: 'inherit', display: 'block' }}>
+                                        Les fermes
+                                    </Button>
+                                    <Button href='/le-projet' onClick={this.handleCloseNavMenu} sx={{ my: 2, color: 'inherit', display: 'block' }}>
+                                        Le projet
+                                    </Button>
+                                </Box>
+
+                                <Box sx={{ flexGrow: 0 }}>
+                                    <Tooltip title="Open settings">
+                                        <IconButton onClick={this.handleOpenUserMenu} sx={{ p: 0 }}>
+                                            {
+                                                user.isLoggedIn() ? <Avatar alt="IAM" src="/static/images/avatar/2.jpg" /> : <Avatar alt="W" src="/static/images/avatar/2.jpg" />
+                                            }
+                                        </IconButton>
+                                    </Tooltip>
+                                    <Menu
+                                        id="menu-appbar"
+                                        anchorEl={this.state.anchorElUser}
+                                        anchorOrigin={{
+                                            vertical: 'bottom',
+                                            horizontal: 'center',
+                                        }}
+                                        keepMounted
+                                        transformOrigin={{
+                                            vertical: 'top',
+                                            horizontal: 'right'
+                                        }}
+                                        open={Boolean(this.state.anchorElUser)}
+                                        onClose={this.handleCloseUserMenu}
+                                    >
+                                        {user.isLoggedIn() ?
+                                            <div>
+                                                <Link href="/dashboard" underline="none" color="inherit">
+                                                    <MenuItem
+                                                        onClick={this.handleCloseUserMenu}>Profile</MenuItem>
+                                                </Link>
+                                                <MenuItem onClick={this.handleCloseUserMenu}>User Management</MenuItem>
+                                                <MenuItem onClick={this.logout}>Logout</MenuItem>
+                                            </div>
+                                            :
+                                            <>
+                                                <Link href="/login" underline="none" color="inherit">
+                                                    <MenuItem
+                                                        onClick={this.handleCloseUserMenu}>Se connecter</MenuItem>
+                                                </Link>
+                                                <Link href="/register" underline="none" color="inherit">
+                                                    <MenuItem onClick={this.handleCloseUserMenu}>S'inscrire</MenuItem>
+                                                </Link>
+                                            </>
+                                        }
+
+                                    </Menu>
+                                </Box>
+                            </Toolbar>
+
+                        </Container>
+                    </AppBar>
+                </Breakpoint>
+                <Breakpoint xs only>
+                    <Mobile />
+                </Breakpoint>
+            </>
         );
     }
 }
